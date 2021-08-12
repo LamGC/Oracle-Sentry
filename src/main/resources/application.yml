@@ -1,0 +1,10 @@
+oracle:
+  identity:
+    # location: "C:\\Users\\80728\\.oci\\global\\"
+  script:
+    ssh:
+      identityPath: "./ssh.config.json"
+
+logging:
+  level:
+    root: INFO

@@ -1,0 +1,69 @@
+package net.lamgc.oracle.sentry.script.groovy;
+
+import com.google.common.base.Throwables;
+import groovy.lang.GroovyClassLoader;
+import groovy.util.DelegatingScript;
+import net.lamgc.oracle.sentry.script.Script;
+import net.lamgc.oracle.sentry.script.ScriptComponent;
+import net.lamgc.oracle.sentry.script.ScriptInfo;
+import net.lamgc.oracle.sentry.script.ScriptLoader;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * @author LamGC
+ */
+@SuppressWarnings("MapOrSetKeyShouldOverrideHashCodeEquals")
+public class GroovyScriptLoader implements ScriptLoader {
+
+    private final static Logger log = LoggerFactory.getLogger(GroovyScriptLoader.class);
+
+    private final GroovyClassLoader scriptClassLoader;
+
+    private final Map<Script, ScriptInfo> scriptInfoMap = new ConcurrentHashMap<>();
+
+    public GroovyScriptLoader() {
+        CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
+        compilerConfiguration.setScriptBaseClass(DelegatingScript.class.getName());
+        this.scriptClassLoader = new GroovyClassLoader(GroovyClassLoader.class.getClassLoader(), compilerConfiguration);
+    }
+
+    @Override
+    public boolean canLoad(File scriptFile) {
+        return scriptFile.getName().endsWith(".groovy");
+    }
+
+    @Override
+    public Script loadScript(ScriptComponent context, File scriptFile) throws IOException {
+        Class<?> scriptClass = scriptClassLoader.parseClass(scriptFile);
+        if (!DelegatingScript.class.isAssignableFrom(scriptClass)) {
+            return null;
+        }
+        try {
+            Constructor<? extends DelegatingScript> constructor =
+                    scriptClass.asSubclass(DelegatingScript.class).getConstructor();
+            DelegatingScript newScriptObject = constructor.newInstance();
+            GroovyDslDelegate dslDelegate = new GroovyDslDelegate(context.HTTP(), context.InstanceManager());
+            newScriptObject.setDelegate(dslDelegate);
+            newScriptObject.run();
+            scriptInfoMap.put(dslDelegate, dslDelegate.getScriptInfo());
+            return dslDelegate;
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            log.error("加载脚本时发生异常.(ScriptPath: {})\n{}", scriptFile.getAbsolutePath(), Throwables.getStackTraceAsString(e));
+        }
+        return null;
+    }
+
+    @Override
+    public ScriptInfo getScriptInfo(Script script) {
+        return scriptInfoMap.get(script);
+    }
+}

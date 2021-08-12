@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.5.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+group 'net.lamgc.oracle'
+version '0.0.1-SNAPSHOT'
+compileJava.sourceCompatibility = '16'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    def ociSdkVer = '2.3.2'
+    def sshdVer = '2.7.0'
+    def bouncyCastleVer = '1.69'
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation 'org.slf4j:slf4j-api:1.7.31'
+    // implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'
+
+
+    implementation "com.oracle.oci.sdk:oci-java-sdk-core:${ociSdkVer}"
+    implementation "com.oracle.oci.sdk:oci-java-sdk-identity:${ociSdkVer}"
+
+    implementation "org.apache.sshd:sshd-core:${sshdVer}"
+    implementation "org.apache.sshd:sshd-sftp:${sshdVer}"
+
+    implementation "org.bouncycastle:bcpg-jdk15on:${bouncyCastleVer}"
+    implementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVer}"
+
+    implementation 'org.codehaus.groovy:groovy-all:3.0.7'
+
+    implementation 'com.google.code.gson:gson:2.8.7'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
