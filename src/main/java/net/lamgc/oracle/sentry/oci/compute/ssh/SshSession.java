@@ -7,6 +7,7 @@ import org.apache.sshd.sftp.client.SftpClientFactory;
 import java.io.Closeable;
 import java.io.IOException;
 
+@SuppressWarnings("unused")
 public class SshSession implements Closeable {
 
     private final ClientSession clientSession;
@@ -15,8 +16,8 @@ public class SshSession implements Closeable {
         this.clientSession = clientSession;
     }
 
-    public SshExecChannel execCommand(String command) throws IOException {
-        return new SshExecChannel(clientSession.createExecChannel(command));
+    public CommandExecSession createExecSession(String command) throws IOException {
+        return new CommandExecSession(clientSession.createExecChannel(command));
     }
 
     @Override
