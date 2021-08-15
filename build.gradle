@@ -5,8 +5,8 @@ plugins {
 }
 
 group 'net.lamgc.oracle'
-version '0.0.1-SNAPSHOT'
-compileJava.sourceCompatibility = '16'
+version '0.0.1-alpha-SNAPSHOT'
+compileJava.sourceCompatibility = JavaVersion.VERSION_16
 
 repositories {
     mavenCentral()
@@ -21,8 +21,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'org.slf4j:slf4j-api:1.7.31'
-    // implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.14.1'
-
 
     implementation "com.oracle.oci.sdk:oci-java-sdk-core:${ociSdkVer}"
     implementation "com.oracle.oci.sdk:oci-java-sdk-identity:${ociSdkVer}"
