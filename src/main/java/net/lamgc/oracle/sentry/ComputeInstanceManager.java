@@ -11,8 +11,6 @@ import com.oracle.bmc.identity.requests.ListCompartmentsRequest;
 import com.oracle.bmc.identity.responses.ListCompartmentsResponse;
 import net.lamgc.oracle.sentry.oci.compute.ComputeInstance;
 import net.lamgc.oracle.sentry.oci.compute.ssh.SshAuthIdentityProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +23,6 @@ import java.util.stream.Collectors;
  * @author LamGC
  */
 public class ComputeInstanceManager {
-
-    private final static Logger log = LoggerFactory.getLogger(ComputeInstanceManager.class);
 
     private final Map<String, ComputeInstance> instanceMap = new ConcurrentHashMap<>();
     private SshAuthIdentityProvider sshIdentityProvider;
