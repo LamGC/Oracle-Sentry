@@ -133,6 +133,11 @@ public final class SshAuthIdentityProvider {
         }
         Map<String, SshAuthInfo> map = gson.fromJson(new FileReader(identityJsonFile, StandardCharsets.UTF_8),
                 new TypeToken<Map<String, SshAuthInfo>>(){}.getType());
+        if (map == null) {
+            log.warn("没有可用的 SSH 认证配置.");
+            return;
+        }
+
         for (String id : map.keySet()) {
             SshAuthInfo info = map.get(id);
             info.setProvider(this);
