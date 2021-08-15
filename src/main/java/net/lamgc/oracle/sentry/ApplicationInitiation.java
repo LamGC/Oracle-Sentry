@@ -9,21 +9,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 
 /**
  * @author LamGC
  */
-@SuppressWarnings("rawtypes")
 @Configuration
-public class ApplicationInitiation implements ApplicationContextInitializer {
+public class ApplicationInitiation {
 
     private final static Logger log = LoggerFactory.getLogger(ApplicationInitiation.class);
 
@@ -99,20 +97,10 @@ public class ApplicationInitiation implements ApplicationContextInitializer {
         return manager;
     }
 
-    @Override
-    public void initialize(ConfigurableApplicationContext applicationContext) {
-        try {
-            boolean result = initialDirectory();
-            if (result) {
-                System.exit(1);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private boolean initialDirectory() throws IOException {
+    @PostConstruct
+    private void initialEnvironment() throws IOException {
         String[] directors = new String[] {
+                "./config",
                 identityDirectory,
                 scriptsLocation
         };
@@ -121,23 +109,25 @@ public class ApplicationInitiation implements ApplicationContextInitializer {
                 sshIdentityPath
         };
 
-        boolean hasFailure = false;
         for (String directory : directors) {
             File dir = new File(directory);
-            if (!dir.exists() && !dir.mkdirs()) {
-                log.error("文件夹 {} 创建失败.", dir.getCanonicalPath());
-                hasFailure = true;
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) {
+                    log.error("文件夹 {} 创建失败.", dir.getCanonicalPath());
+
+                }
             }
         }
 
         for (String file : files) {
             File dir = new File(file);
-            if (!dir.exists() && !dir.createNewFile()) {
-                log.error("文件 {} 创建失败.", dir.getCanonicalPath());
-                hasFailure = true;
+            if (!dir.exists()) {
+                if (!dir.createNewFile()) {
+                    log.error("文件 {} 创建失败.", dir.getCanonicalPath());
+
+                }
             }
         }
-        log.info("目录检查完成.");
-        return hasFailure;
+        log.debug("目录检查完成.");
     }
 }
