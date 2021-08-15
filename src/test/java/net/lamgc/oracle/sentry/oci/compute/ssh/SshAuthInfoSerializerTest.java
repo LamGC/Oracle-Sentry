@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SshAuthInfoSerializerTest {
 
     private final static Gson gson = new GsonBuilder()
-            .registerTypeAdapter(SshAuthInfo.class, new SshAuthInfoSerializer())
+            .registerTypeAdapter(SshAuthInfo.class, SshAuthInfoSerializer.INSTANCE)
             .create();
 
     private JsonObject getPasswordAuthObject() {
