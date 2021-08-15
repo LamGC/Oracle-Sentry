@@ -15,6 +15,10 @@ import java.util.Base64;
 import java.util.Collections;
 
 /**
+ * SSH 认证配置编解码类.
+ * <p> 由于实例公共 IP 可能会发生改变, SSH 自带的 known_hosts 信任列表不再适用,
+ * 所以我们采用 InstanceId 代替 IP 来绑定 Server key, 同时保存认证类型和认证信息,
+ * 来安全保存(表面上的) SSH 认证配置.
  * @author LamGC
  */
 public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>, JsonDeserializer<SshAuthInfo> {
