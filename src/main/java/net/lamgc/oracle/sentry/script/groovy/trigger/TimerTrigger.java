@@ -1,6 +1,7 @@
 package net.lamgc.oracle.sentry.script.groovy.trigger;
 
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -19,6 +20,9 @@ public class TimerTrigger implements GroovyTrigger {
     private final static ThreadPoolTaskScheduler SCHEDULER = new ThreadPoolTaskScheduler();
     static {
         SCHEDULER.setPoolSize(Runtime.getRuntime().availableProcessors());
+        SCHEDULER.setThreadFactory(new ThreadFactoryBuilder()
+                .setNameFormat("Groovy-TimerTrigger-%d")
+                .build());
         SCHEDULER.setErrorHandler(t -> log.error("脚本执行时发生异常.", t));
     }
 
