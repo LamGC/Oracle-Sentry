@@ -1,5 +1,6 @@
 package net.lamgc.oracle.sentry.oci.compute.ssh;
 
+import net.lamgc.oracle.sentry.Constants;
 import net.lamgc.oracle.sentry.oci.compute.ComputeInstance;
 import org.apache.sshd.client.keyverifier.RequiredServerKeyVerifier;
 import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
@@ -7,8 +8,6 @@ import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.config.keys.KeyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.NonNull;
 
 import java.net.SocketAddress;
 import java.security.PublicKey;
@@ -20,10 +19,6 @@ import java.util.Scanner;
 public class OracleInstanceServerKeyVerifier implements ServerKeyVerifier {
 
     private final static Logger log = LoggerFactory.getLogger(OracleInstanceServerKeyVerifier.class);
-
-    @Value("${oracle.ssh.firstConnection.authenticationPolicy}")
-    @NonNull
-    private static String firstConnectionPolicy;
 
     private final ComputeInstance instance;
     private final SshAuthInfo info;
@@ -53,11 +48,12 @@ public class OracleInstanceServerKeyVerifier implements ServerKeyVerifier {
     }
 
     private boolean usePolicyConfirm(SocketAddress address, PublicKey serverKey) {
+        String policyName = Constants.instance.getFirstConnectionPolicy().toUpperCase();
         FirstConnectionPolicy policy;
         try {
-            policy = FirstConnectionPolicy.valueOf(firstConnectionPolicy.toUpperCase());
+            policy = FirstConnectionPolicy.valueOf(policyName);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Unsupported policy: " + firstConnectionPolicy);
+            throw new IllegalArgumentException("Unsupported policy: " + policyName);
         }
         return policy.confirmFunction.confirm(this.instance, address, serverKey);
     }
