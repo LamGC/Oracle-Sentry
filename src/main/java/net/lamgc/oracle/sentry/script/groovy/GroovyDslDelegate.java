@@ -2,7 +2,9 @@ package net.lamgc.oracle.sentry.script.groovy;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import net.lamgc.oracle.sentry.script.groovy.trigger.*;
+import net.lamgc.oracle.sentry.ComputeInstanceManager;
+import net.lamgc.oracle.sentry.script.Script;
+import net.lamgc.oracle.sentry.script.ScriptInfo;
 import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
@@ -11,7 +13,7 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
  * @author LamGC
  */
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-public class GroovyDslDelegate extends Script {
+public class GroovyDslDelegate implements Script {
 
     private final GroovyScriptInfo scriptInfo = new GroovyScriptInfo();
     private final ScriptHttpClient HTTP;
