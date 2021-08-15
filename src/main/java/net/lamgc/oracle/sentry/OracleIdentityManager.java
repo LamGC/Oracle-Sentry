@@ -70,7 +70,7 @@ public final class OracleIdentityManager {
             try {
                 AuthenticationDetailsProvider provider = loadFromConfigFile(configFile);
                 loadedCount ++;
-                log.info("已成功加载身份配置文件.\nUserId: {}\nUsername: {}\nPath: {})",
+                log.info("已成功加载身份配置文件.\n\tUserId: {}\n\tUsername: {}\n\tPath: {}",
                         provider.getUserId(),
                         getIdentityName(provider.getUserId()),
                         configFile.getCanonicalPath());
