@@ -1,8 +1,16 @@
 oracle:
   identity:
+    # 身份配置文件的文件名匹配规则.
     pattern: '.+\.oracle\.ini$'
-    location: "./identity/"
+    # 身份配置文件夹路径.
+    location: './identity/'
   script:
-    location: "./scripts/"
-    ssh:
-      identityPath: "./config/ssh.config.json"
+    # 脚本文件夹路径.
+    location: './scripts/'
+  ssh:
+    # SSH 认证文件存储路径.
+    identityPath: './config/ssh-auth.json'
+    firstConnection:
+      # 首次连接认证策略
+      # 支持 inquiry(询问) accept(接受) reject(拒绝)
+      authenticationPolicy: 'inquiry'
