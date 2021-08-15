@@ -21,12 +21,18 @@ public class ApplicationMain {
 
     public static void main(String[] args) {
         SpringApplication.run(ApplicationMain.class, args);
-        Runtime.getRuntime().addShutdownHook(new Thread(mainThreadWaiter::notifyAll, "ShutdownMainThread"));
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            synchronized (mainThreadWaiter) {
+                mainThreadWaiter.notifyAll();
+            }
+        }, "ShutdownMainThread"));
+
         synchronized (mainThreadWaiter) {
             try {
                 mainThreadWaiter.wait();
             } catch (InterruptedException e) {
-                log.warn("", e);
+                log.warn("主线程发生中断.", e);
             }
         }
     }
