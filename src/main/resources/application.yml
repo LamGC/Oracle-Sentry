@@ -12,5 +12,5 @@ oracle:
     identityPath: './config/ssh-auth.json'
     firstConnection:
       # 首次连接认证策略
-      # 支持 inquiry(询问) accept(接受) reject(拒绝)
-      authenticationPolicy: 'inquiry'
+      # 支持 confirm(询问) accept(接受) reject(拒绝)
+      authenticationPolicy: 'confirm'
