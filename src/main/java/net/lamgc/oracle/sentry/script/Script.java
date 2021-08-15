@@ -1,8 +1,5 @@
 package net.lamgc.oracle.sentry.script;
 
-import groovy.lang.Closure;
-import groovy.lang.DelegatesTo;
-
 /**
  * @author LamGC
  */

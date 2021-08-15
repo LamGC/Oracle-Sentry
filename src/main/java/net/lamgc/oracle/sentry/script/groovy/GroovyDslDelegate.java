@@ -1,16 +1,10 @@
 package net.lamgc.oracle.sentry.script.groovy;
 
-import net.lamgc.oracle.sentry.ComputeInstanceManager;
-import net.lamgc.oracle.sentry.script.*;
-
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import net.lamgc.oracle.sentry.script.groovy.trigger.*;
 import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Groovy DSL 脚本的父类.

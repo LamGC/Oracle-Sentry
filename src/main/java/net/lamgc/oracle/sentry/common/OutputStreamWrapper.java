@@ -1,7 +1,6 @@
 package net.lamgc.oracle.sentry.common;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 public class OutputStreamWrapper extends OutputStream {

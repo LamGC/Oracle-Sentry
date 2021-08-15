@@ -4,10 +4,8 @@ import com.google.common.base.Strings;
 import com.google.gson.*;
 import org.apache.sshd.common.config.keys.KeyUtils;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
-import org.apache.sshd.common.config.keys.PublicKeyEntryDataResolver;
 import org.apache.sshd.common.config.keys.PublicKeyEntryDecoder;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -22,6 +20,8 @@ import java.util.Collections;
 public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>, JsonDeserializer<SshAuthInfo> {
 
     public final static SshAuthInfoSerializer INSTANCE = new SshAuthInfoSerializer();
+
+    private SshAuthInfoSerializer() {}
 
     @Override
     public SshAuthInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -109,22 +109,6 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
         StringBuilder builder = new StringBuilder();
         PublicKeyEntry.appendPublicKeyEntry(builder, key);
         return builder.toString();
-        /*
-        // 以下代码改写自 KnownHosts 的那个认证器, 说实话翻一下官方代码还可以找到不错的东西.
-        @SuppressWarnings("unchecked") PublicKeyEntryDecoder<PublicKey, ?> decoder
-                = (PublicKeyEntryDecoder<PublicKey, ?>) KeyUtils.getPublicKeyEntryDecoder(key);
-        if (decoder == null) {
-            throw new JsonParseException("Cannot retrieve decoder for key=" + key.getAlgorithm());
-        }
-
-        try (ByteArrayOutputStream s = new ByteArrayOutputStream(Byte.MAX_VALUE)) {
-            String keyType = decoder.encodePublicKey(s, key);
-            byte[] bytes = s.toByteArray();
-            PublicKeyEntryDataResolver encoder = PublicKeyEntry.resolveKeyDataEntryResolver(keyType);
-            return encoder.encodeEntryKeyData(bytes);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
     }
 
 }

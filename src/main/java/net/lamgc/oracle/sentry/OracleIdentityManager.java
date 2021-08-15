@@ -13,7 +13,6 @@ import com.oracle.bmc.identity.requests.GetUserRequest;
 import com.oracle.bmc.identity.responses.GetUserResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileNotFoundException;
