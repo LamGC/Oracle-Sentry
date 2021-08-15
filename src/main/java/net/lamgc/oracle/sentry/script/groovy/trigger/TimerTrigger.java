@@ -3,20 +3,24 @@ package net.lamgc.oracle.sentry.script.groovy.trigger;
 import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
 /**
  * @author LamGC
  */
+@SuppressWarnings("unused")
 @TriggerName("timer")
 public class TimerTrigger implements GroovyTrigger {
 
     private final static Logger log = LoggerFactory.getLogger(TimerTrigger.class);
 
     private CronTrigger trigger;
-    private final TaskScheduler scheduler = new ThreadPoolTaskScheduler();
+    private final static ThreadPoolTaskScheduler SCHEDULER = new ThreadPoolTaskScheduler();
+    static {
+        SCHEDULER.setPoolSize(Runtime.getRuntime().availableProcessors());
+        SCHEDULER.setErrorHandler(t -> log.error("脚本执行时发生异常.", t));
+    }
 
     /**
      * 设定定时时间.
@@ -49,7 +53,7 @@ public class TimerTrigger implements GroovyTrigger {
             return;
         }
 
-        scheduler.schedule(runnable, trigger);
+        SCHEDULER.schedule(runnable, trigger);
     }
 
 }
