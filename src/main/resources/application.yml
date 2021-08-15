@@ -1,10 +1,8 @@
 oracle:
   identity:
-    # location: "C:\\Users\\80728\\.oci\\global\\"
+    pattern: '.+\.oracle\.ini$'
+    location: "./identity/"
   script:
+    location: "./scripts/"
     ssh:
-      identityPath: "./ssh.config.json"
-
-logging:
-  level:
-    root: INFO
+      identityPath: "./config/ssh.config.json"
