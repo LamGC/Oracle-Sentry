@@ -27,19 +27,19 @@ public class ApplicationInitiation implements ApplicationContextInitializer {
 
     private final static Logger log = LoggerFactory.getLogger(ApplicationInitiation.class);
 
-    @Value("${oracle.identity.location:./identity/}")
+    @Value("${oracle.identity.location}")
     @NonNull
     private String identityDirectory;
 
-    @Value("${oracle.identity.pattern:.*\\.oracle.ini$}")
+    @Value("${oracle.identity.pattern}")
     @NonNull
     private String identityFilePattern;
 
-    @Value("${sentry.script.location:./scripts/}")
+    @Value("${oracle.script.location}")
     @NonNull
     private String scriptsLocation;
 
-    @Value("${oracle.script.ssh.identityPath:./config/ssh.config.json}")
+    @Value("${oracle.ssh.identityPath}")
     @NonNull
     private String sshIdentityPath;
 
