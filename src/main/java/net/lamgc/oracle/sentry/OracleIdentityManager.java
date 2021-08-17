@@ -1,5 +1,6 @@
 package net.lamgc.oracle.sentry;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -69,6 +70,9 @@ public final class OracleIdentityManager {
         for (File configFile : configFiles) {
             try {
                 AuthenticationDetailsProvider provider = loadFromConfigFile(configFile);
+                if (provider == null) {
+                    continue;
+                }
                 loadedCount ++;
                 log.info("已成功加载身份配置文件.\n\tUserId: {}\n\tUsername: {}\n\tPath: {}",
                         provider.getUserId(),
@@ -93,6 +97,11 @@ public final class OracleIdentityManager {
 
         ConfigFileReader.ConfigFile config
                 = ConfigFileReader.parse(identityConfig.getAbsolutePath());
+        if (!checkIdentityProfileConfig(config)) {
+            log.warn("该配置文件缺少必要信息, 跳过加载.(Path: {})", identityConfig.getCanonicalPath());
+            return null;
+        }
+
 
         String keyFilePath = config.get("key_file");
         if (keyFilePath.startsWith(".")) {
@@ -116,6 +125,23 @@ public final class OracleIdentityManager {
         identityMap.put(provider.getUserId(), provider);
         return provider;
     }
+
+    private boolean checkIdentityProfileConfig(ConfigFileReader.ConfigFile config) {
+        String[] fields = new String[] {
+                "key_file",
+                "region",
+                "tenancy",
+                "user",
+                "fingerprint"
+        };
+        for (String field : fields) {
+            if (Strings.isNullOrEmpty(config.get(field))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * 获取身份所属用户的名称.
