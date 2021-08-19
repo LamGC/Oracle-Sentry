@@ -26,7 +26,7 @@ import java.nio.file.Files;
  * @author LamGC
  */
 @Configuration
-public class ApplicationInitiation {
+class ApplicationInitiation {
 
     private final static Logger log = LoggerFactory.getLogger(ApplicationInitiation.class);
 
