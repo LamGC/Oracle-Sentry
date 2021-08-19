@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
  * @author LamGC
  */
 @SuppressWarnings("UnstableApiUsage")
-public final class SshAuthIdentityProvider {
+public final class SshAuthIdentityProvider implements AutoCloseable {
 
     private final static String DEFAULT_AUTH_KEY = "@default";
     private final static Logger log = LoggerFactory.getLogger(SshAuthIdentityProvider.class);
@@ -71,6 +72,7 @@ public final class SshAuthIdentityProvider {
                 log.warn("本次 SSH 认证配置保存失败.", e);
             }
         }, 60, 10, TimeUnit.SECONDS);
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close, "Thread-ProviderAutoSave-Close"));
     }
 
     /**
@@ -169,6 +171,10 @@ public final class SshAuthIdentityProvider {
      * @return 返回所有不存在对应 SSH 认证配置的实例 Id.
      */
     private Set<String> checkForMissingInstances() {
+        if (instanceManager == null) {
+            log.info("实例管理器未设置, 跳过检查.");
+            return Collections.emptySet();
+        }
         Set<String> instanceIdSet = instanceManager.getComputeInstances().stream()
                 .map(ComputeInstance::getInstanceId)
                 .collect(Collectors.toSet());
@@ -178,4 +184,8 @@ public final class SshAuthIdentityProvider {
         return instanceIdSet;
     }
 
+    @Override
+    public void close() {
+        scheduledExec.shutdown();
+    }
 }
