@@ -64,4 +64,12 @@ public final class HttpAccessResponse {
         return entity;
     }
 
+    /**
+     * 获取 Header.
+     * @param name Header 名称.
+     * @return 如果存在, 返回相应值, 否则返回 {@code null}.
+     */
+    public String getHeader(String name) {
+        return headers.get(name);
+    }
 }
