@@ -49,6 +49,7 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
             String privateKeyPath = getFieldToStringOrFail(infoObject, "privateKeyPath");
             File privateKeyFile = new File(privateKeyPath);
             publicKeyInfo.setPrivateKeyPath(privateKeyFile);
+            publicKeyInfo.setKeyPassword(getFieldToStringOrFail(infoObject, "keyPassword"));
             info = publicKeyInfo;
         } else {
             throw new JsonParseException("Unsupported authentication type: " + authType);
