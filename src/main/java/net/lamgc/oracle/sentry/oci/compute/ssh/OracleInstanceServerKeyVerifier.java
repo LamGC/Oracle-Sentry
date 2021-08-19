@@ -23,7 +23,7 @@ public class OracleInstanceServerKeyVerifier implements ServerKeyVerifier {
     private final ComputeInstance instance;
     private final SshAuthInfo info;
 
-    public OracleInstanceServerKeyVerifier(ComputeInstance instance, SshAuthInfo info) {
+    OracleInstanceServerKeyVerifier(ComputeInstance instance, SshAuthInfo info) {
         this.instance = instance;
         this.info = info;
     }

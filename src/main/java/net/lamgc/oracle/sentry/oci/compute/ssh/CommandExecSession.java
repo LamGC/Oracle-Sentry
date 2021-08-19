@@ -19,7 +19,7 @@ public final class CommandExecSession implements Closeable {
 
     private final ChannelExec channelExec;
 
-    public CommandExecSession(ChannelExec channelExec) {
+    CommandExecSession(ChannelExec channelExec) {
         this.channelExec = channelExec;
     }
 
