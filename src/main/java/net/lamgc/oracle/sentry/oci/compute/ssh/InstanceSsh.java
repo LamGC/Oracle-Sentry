@@ -16,6 +16,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 实例 SSH 客户端.
+ * <p> 包装并简化了 SSH 会话的创建流程.
+ * @author LamGC
+ */
+@SuppressWarnings("unused")
 public class InstanceSsh implements AutoCloseable {
 
     private final static Logger log = LoggerFactory.getLogger(InstanceSsh.class);
@@ -24,6 +30,11 @@ public class InstanceSsh implements AutoCloseable {
     private final SshAuthInfo authInfo;
     private final SshClient sshClient;
 
+    /**
+     * 创建连接实例用的 SSH 客户端.
+     * @param instance SSH 客户端对应的计算实例.
+     * @param authInfo SSH 认证配置.
+     */
     public InstanceSsh(ComputeInstance instance, SshAuthInfo authInfo) {
         this.instance = Objects.requireNonNull(instance);
         this.authInfo = Objects.requireNonNull(authInfo);
@@ -43,6 +54,12 @@ public class InstanceSsh implements AutoCloseable {
         sshClient.start();
     }
 
+    /**
+     * 创建 SSH 会话.
+     * <p> 允许创建多个 SSH 会话.
+     * @return 返回新的 SSH 会话.
+     * @throws IOException 会话创建失败时将抛出异常.
+     */
     public SshSession createSession() throws IOException {
         Set<String> instancePublicIps = instance.network().getInstancePublicIp();
         if (instancePublicIps.stream().findFirst().isEmpty()) {
@@ -74,7 +91,6 @@ public class InstanceSsh implements AutoCloseable {
             throw new IOException("Authentication timeout.");
         }
     }
-
 
     @Override
     public void close() {

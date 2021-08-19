@@ -4,10 +4,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * 输入流包装器.
+ * <p> 准确来说只是屏蔽了 {@link InputStream#close()} 而已,
+ * 尝试修复 SSH 命令执行会话可能会关闭设置的输入流的问题.
+ * @author LamGC
+ */
 public class InputStreamWrapper extends InputStream {
     
     private final InputStream source;
-    
+
+    /**
+     * 包装一个输入流.
+     * @param source 输入源.
+     */
     public InputStreamWrapper(InputStream source) {
         this.source = source;
     }

@@ -18,6 +18,9 @@ public class GroovyTriggerProvider {
 
     private final Map<String, ServiceLoader.Provider<GroovyTrigger>> triggerProviderMap = new ConcurrentHashMap<>();
 
+    /**
+     * Trigger Provider 唯一实例.
+     */
     public final static GroovyTriggerProvider INSTANCE = new GroovyTriggerProvider();
 
     private GroovyTriggerProvider() {
@@ -40,6 +43,12 @@ public class GroovyTriggerProvider {
         });
     }
 
+    /**
+     * 通过 Trigger 名称获取新的 Trigger.
+     * @param triggerName Trigger 名称.
+     * @return 返回指定 Trigger 的新实例.
+     * @throws NoSuchElementException 当指定的 Trigger 名称没有对应 Trigger 时抛出该异常.
+     */
     public GroovyTrigger getTriggerByName(String triggerName) {
         if (!triggerProviderMap.containsKey(triggerName.toLowerCase())) {
             throw new NoSuchElementException("The specified trigger could not be found: " + triggerName);

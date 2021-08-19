@@ -87,7 +87,9 @@ public final class OracleIdentityManager {
 
     /**
      * 通过配置文件加载身份信息.
+     * <p> 加载成功后, 将会注册到身份管理器中.
      * @param identityConfig 身份信息文件.
+     * @return 返回已成功加载后, 配置文件对应的身份配置提供器.
      * @throws IOException 如果读取文件发生问题时将抛出该异常.
      */
     public AuthenticationDetailsProvider loadFromConfigFile(File identityConfig) throws IOException {

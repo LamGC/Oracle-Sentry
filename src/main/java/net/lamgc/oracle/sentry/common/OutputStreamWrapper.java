@@ -3,10 +3,20 @@ package net.lamgc.oracle.sentry.common;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * 输出流包装器.
+ * <p> 准确来说只是屏蔽了 {@link OutputStream#close()} 而已,
+ * 尝试修复 SSH 命令执行会话可能会关闭设置的输出流的问题.
+ * @author LamGC
+ */
 public class OutputStreamWrapper extends OutputStream {
     
     private final OutputStream target;
-    
+
+    /**
+     * 包装一个输出流.
+     * @param target 目标输出流.
+     */
     public OutputStreamWrapper(OutputStream target) {
         this.target = target;
     }

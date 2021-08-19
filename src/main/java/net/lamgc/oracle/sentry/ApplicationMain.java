@@ -19,6 +19,10 @@ public class ApplicationMain {
     @SuppressWarnings("AlibabaConstantFieldShouldBeUpperCase")
     private final static Object mainThreadWaiter = new Object();
 
+    /**
+     * 程序入口.
+     * @param args 程序参数.
+     */
     public static void main(String[] args) {
         SpringApplication.run(ApplicationMain.class, args);
 

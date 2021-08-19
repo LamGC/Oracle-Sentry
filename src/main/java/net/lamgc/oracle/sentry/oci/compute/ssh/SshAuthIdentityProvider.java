@@ -51,7 +51,11 @@ public final class SshAuthIdentityProvider {
                     .build());
     private final AtomicBoolean needSave = new AtomicBoolean(false);
 
-
+    /**
+     * 创建 SSH 认证配置提供器.
+     * @param instanceManager 所属实例管理器.
+     * @param identityJson 认证配置文件对象.
+     */
     public SshAuthIdentityProvider(ComputeInstanceManager instanceManager, File identityJson) {
         this.instanceManager = instanceManager;
         this.identityJsonFile = identityJson;
@@ -69,6 +73,11 @@ public final class SshAuthIdentityProvider {
         }, 60, 10, TimeUnit.SECONDS);
     }
 
+    /**
+     * 添加 SSH 认证配置.
+     * @param instanceId 配置对应的实例 Id.
+     * @param authInfo SSH 认证配置对象.
+     */
     public void addSshAuthIdentity(String instanceId, SshAuthInfo authInfo) {
         authInfoMap.put(instanceId, authInfo);
     }
@@ -157,6 +166,7 @@ public final class SshAuthIdentityProvider {
 
     /**
      * 获取所有不存在 SSH 配置的实例 Id.
+     * @return 返回所有不存在对应 SSH 认证配置的实例 Id.
      */
     private Set<String> checkForMissingInstances() {
         Set<String> instanceIdSet = instanceManager.getComputeInstances().stream()

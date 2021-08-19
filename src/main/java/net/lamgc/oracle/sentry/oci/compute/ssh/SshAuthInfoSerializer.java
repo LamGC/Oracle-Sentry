@@ -23,6 +23,10 @@ import java.util.Collections;
  */
 public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>, JsonDeserializer<SshAuthInfo> {
 
+    /**
+     * 本类唯一实例.
+     * <p> 序列化器支持多用.
+     */
     public final static SshAuthInfoSerializer INSTANCE = new SshAuthInfoSerializer();
 
     private SshAuthInfoSerializer() {}

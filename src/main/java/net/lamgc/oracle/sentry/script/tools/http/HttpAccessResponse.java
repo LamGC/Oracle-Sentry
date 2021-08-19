@@ -32,18 +32,35 @@ public final class HttpAccessResponse {
         this.entity = response.getEntity();
     }
 
+    /**
+     * 获取响应状态行.
+     * @return 返回响应状态行, 包括响应码和信息.
+     */
     public StatusLine getStatusLine() {
         return statusLine;
     }
 
+    /**
+     * 获取语言.
+     * @return 返回 Locale 对象.
+     */
     public Locale getLocale() {
         return locale;
     }
 
+    /**
+     * 将 ResponseBody 转为字符串并返回.
+     * @return 返回字符串形式的响应体.
+     * @throws IOException 当接收失败时抛出异常.
+     */
     public String getContentToString() throws IOException {
         return EntityUtils.toString(entity);
     }
 
+    /**
+     * 获取响应体实体, 可手动接收 Http Response Body.
+     * @return 返回 Http 实体.
+     */
     public HttpEntity getEntity() {
         return entity;
     }

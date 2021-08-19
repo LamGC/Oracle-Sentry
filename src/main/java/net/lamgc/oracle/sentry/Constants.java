@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 @Component("sentry.constants")
 public final class Constants {
 
+    /**
+     * 本类唯一实例, 请不要进行设置.
+     */
     public static Constants instance;
 
     private Constants() {
@@ -21,6 +24,10 @@ public final class Constants {
     private String firstConnectionPolicy;
 
 
+    /**
+     * 获取 SSH 首次连接策略.
+     * @return 返回策略值.
+     */
     @NonNull
     public String getFirstConnectionPolicy() {
         return firstConnectionPolicy;

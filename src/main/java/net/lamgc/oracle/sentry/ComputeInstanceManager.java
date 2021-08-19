@@ -37,6 +37,10 @@ public class ComputeInstanceManager {
         sshIdentityProvider.loadAuthInfo();
     }
 
+    /**
+     * 获取实例 SSH 认证配置提供器.
+     * @return 返回 SSH 认证配置提供器.
+     */
     public SshAuthIdentityProvider getSshIdentityProvider() {
         return sshIdentityProvider;
     }

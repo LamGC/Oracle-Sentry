@@ -13,6 +13,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TriggerName {
 
+    /**
+     * Trigger 名称.
+     * <p> 需保证唯一性.
+     * @return 返回 Trigger 名称.
+     */
     String value();
 
 }

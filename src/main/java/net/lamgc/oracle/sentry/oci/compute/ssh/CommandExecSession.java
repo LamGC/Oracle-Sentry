@@ -71,6 +71,7 @@ public final class CommandExecSession implements Closeable {
     /**
      * 设置输入流.
      * <p> 设置待执行命令的输入流.
+     * @param in 待设置的输入流。
      */
     public void setIn(InputStream in) {
         channelExec.setIn(new InputStreamWrapper(in));
@@ -79,6 +80,7 @@ public final class CommandExecSession implements Closeable {
     /**
      * 设置标准输出流.
      * <p> 对应待执行命令的 Stdout.
+     * @param out 设置标准输出的输出流.
      */
     public void setOut(OutputStream out) {
         channelExec.setOut(new OutputStreamWrapper(out));
@@ -87,6 +89,7 @@ public final class CommandExecSession implements Closeable {
     /**
      * 设置错误输出流.
      * <p> 如果命令使用到, 错误信息会从该输出流输出.
+     * @param err 设置错误输出的输出流.
      */
     public void setErr(OutputStream err) {
         channelExec.setErr(new OutputStreamWrapper(err));

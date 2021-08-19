@@ -23,6 +23,11 @@ public final class ScriptManager {
 
     private final Map<ScriptInfo, Script> scripts = new ConcurrentHashMap<>();
 
+    /**
+     * 创建新的脚本管理器.
+     * @param scriptsLocation 脚本加载路径.
+     * @param components 脚本组件.
+     */
     public ScriptManager(File scriptsLocation, ScriptComponents components) {
         this.scriptsLocation = scriptsLocation;
         this.context = components;

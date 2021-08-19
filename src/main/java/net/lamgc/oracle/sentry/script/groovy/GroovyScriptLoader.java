@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Groovy 脚本加载器.
  * @author LamGC
  */
 @SuppressWarnings("MapOrSetKeyShouldOverrideHashCodeEquals")
@@ -30,6 +31,10 @@ public class GroovyScriptLoader implements ScriptLoader {
 
     private final Map<Script, ScriptInfo> scriptInfoMap = new ConcurrentHashMap<>();
 
+    /**
+     * 构造一个新的脚本加载器.
+     * <p> 每个加载器所使用的 {@link GroovyClassLoader} 实例是不一样的.
+     */
     public GroovyScriptLoader() {
         CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
         compilerConfiguration.setScriptBaseClass(DelegatingScript.class.getName());
