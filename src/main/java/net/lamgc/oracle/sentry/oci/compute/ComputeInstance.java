@@ -2,7 +2,6 @@ package net.lamgc.oracle.sentry.oci.compute;
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider;
 import com.oracle.bmc.core.ComputeClient;
-import com.oracle.bmc.core.model.Image;
 import com.oracle.bmc.core.model.Instance;
 import com.oracle.bmc.core.requests.GetImageRequest;
 import com.oracle.bmc.core.requests.GetInstanceRequest;
@@ -58,21 +57,17 @@ public final class ComputeInstance {
         return compartmentId;
     }
 
-    public String getImageId() {
-        return imageId;
-    }
-
     /**
      * 获取并返回实例镜像信息.
      * <p> 可获取系统信息.
      * <p> 如果实例被 dd, 则本信息不准确.
      * @return 返回实例信息.
      */
-    public Image getImage() {
+    public BootImage getImage() {
         GetImageResponse image = computeClient.getImage(GetImageRequest.builder()
                 .imageId(imageId)
                 .build());
-        return image.getImage();
+        return new BootImage(image.getImage());
     }
 
     /**
