@@ -16,12 +16,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GroovyTriggerProvider {
 
-    private final Map<String, ServiceLoader.Provider<GroovyTrigger>> triggerProviderMap = new ConcurrentHashMap<>();
-
     /**
      * Trigger Provider 唯一实例.
      */
     public final static GroovyTriggerProvider INSTANCE = new GroovyTriggerProvider();
+
+
+    private final Map<String, ServiceLoader.Provider<GroovyTrigger>> triggerProviderMap = new ConcurrentHashMap<>();
 
     private GroovyTriggerProvider() {
         ServiceLoader<GroovyTrigger> loader = ServiceLoader.load(GroovyTrigger.class);
