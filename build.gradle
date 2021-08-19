@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.5.3'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'jacoco'
 }
 
 group 'net.lamgc.oracle'
@@ -43,8 +44,26 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    jacoco {
+        classDumpDir = file("$buildDir/jacoco/classpathDumps")
+    }
 }
 
 javadoc {
     options.encoding = 'UTF-8'
+}
+
+jacoco {
+    version "0.8.7"
+    reportsDir file("$buildDir/jacoco/reports")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        xml.destination file("$buildDir/jacoco/reports.xml")
+
+        html.enabled true
+        html.destination file("$buildDir/jacoco/reports-html/")
+    }
 }
