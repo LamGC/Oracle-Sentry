@@ -6,6 +6,7 @@ import net.lamgc.oracle.sentry.script.groovy.trigger.TriggerName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,6 +52,7 @@ public class GroovyTriggerProvider {
      * @throws NoSuchElementException 当指定的 Trigger 名称没有对应 Trigger 时抛出该异常.
      */
     public GroovyTrigger getTriggerByName(String triggerName) {
+        Objects.requireNonNull(triggerName);
         if (!triggerProviderMap.containsKey(triggerName.toLowerCase())) {
             throw new NoSuchElementException("The specified trigger could not be found: " + triggerName);
         }
