@@ -15,7 +15,11 @@ public class SshSession implements Closeable {
 
     private final ClientSession clientSession;
 
-    public SshSession(ClientSession clientSession) {
+    /**
+     * 创建新的 SSH 会话.
+     * @param clientSession 原始 SSH 会话.
+     */
+    SshSession(ClientSession clientSession) {
         this.clientSession = clientSession;
     }
 
