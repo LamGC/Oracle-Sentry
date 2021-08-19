@@ -1,0 +1,9 @@
+{
+  "username": "opc",
+  "authType": "Public_Key",
+  "serverKey": {
+    "msg": "badServerKeyField"
+  },
+  "privateKeyPath": "~/.ssh/id_rsa",
+  "keyPassword": "123456"
+}

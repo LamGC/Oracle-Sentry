@@ -1,0 +1,4 @@
+net.lamgc.oracle.sentry.script.groovy.trigger.NoAnnotationTrigger
+net.lamgc.oracle.sentry.script.groovy.trigger.BadAnnotationTrigger
+net.lamgc.oracle.sentry.script.groovy.trigger.DuplicateTriggerA
+net.lamgc.oracle.sentry.script.groovy.trigger.DuplicateTriggerB
