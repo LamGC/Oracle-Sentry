@@ -32,6 +32,15 @@ public final class ComputeInstance {
 
     private final ComputeClient computeClient;
 
+    /**
+     * 构造一个计算实例对象.
+     * @param instanceManager 实例所属的管理器.
+     * @param instanceId 实例 Id.
+     * @param userId 所属用户 Id.
+     * @param compartmentId 实例所在区域的 Id.
+     * @param imageId 镜像 Id.
+     * @param provider 所属用户的身份配置提供器.
+     */
     public ComputeInstance(ComputeInstanceManager instanceManager, String instanceId, String userId,
                            String compartmentId, String imageId, AuthenticationDetailsProvider provider) {
         this.instanceManager = instanceManager;
@@ -45,14 +54,28 @@ public final class ComputeInstance {
         this.network = new InstanceNetwork(this);
     }
 
+    /**
+     * 获取实例 Id.
+     * <p> 可通过实例 Id 直接调用 Oracle Cloud SDK, 也可以作为服务器的唯一标识.
+     * @return 返回实例 Id.
+     */
     public String getInstanceId() {
         return instanceId;
     }
 
+    /**
+     * 获取所属用户的 Id.
+     * @return 返回用户 Id.
+     */
     public String getUserId() {
         return userId;
     }
 
+    /**
+     * 获取服务器所属区域的 Id.
+     * <p> 使用的资源必须要处于同一区域, 例如 IP 资源, 磁盘.
+     * @return 返回服务器所属区域的 Id.
+     */
     public String getCompartmentId() {
         return compartmentId;
     }
@@ -79,6 +102,10 @@ public final class ComputeInstance {
         return network;
     }
 
+    /**
+     * 获取实例的 SSH 客户端.
+     * @return 返回实例 SSH 客户端.
+     */
     public InstanceSsh ssh() {
         Instance.LifecycleState instanceState = getInstanceState();
         if (instanceState != Instance.LifecycleState.Running) {
@@ -110,6 +137,7 @@ public final class ComputeInstance {
 
     /**
      * 获取实例名称.
+     * @return 返回实例显示名.
      */
     public String getInstanceName() {
         GetInstanceResponse instance = computeClient.getInstance(GetInstanceRequest.builder()
@@ -149,6 +177,8 @@ public final class ComputeInstance {
 
     /**
      * 获取 SSH 认证信息.
+     * @return 返回实例 SSH 认证信息.
+     * @throws java.util.NoSuchElementException 如果没有指定配置信息则抛出该异常.
      */
     private SshAuthInfo getSshIdentity() {
         return instanceManager.getSshIdentityProvider()
