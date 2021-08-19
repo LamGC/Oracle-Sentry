@@ -112,7 +112,8 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
             StringBuilder builder = new StringBuilder();
             PublicKeyEntry.appendPublicKeyEntry(builder, key);
             return builder.toString();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            log.error("ServerKey 编码失败, 下次加载时需要进行首次连接认证.", e);
         }
         return null;
     }
