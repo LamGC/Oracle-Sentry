@@ -107,32 +107,48 @@ public final class ComputeInstance {
      * @return 返回实例 SSH 客户端.
      */
     public InstanceSsh ssh() {
-        Instance.LifecycleState instanceState = getInstanceState();
-        if (instanceState != Instance.LifecycleState.Running) {
+        String instanceState = getInstanceState();
+        if (!Instance.LifecycleState.Running.name().equals(instanceState)) {
             throw new IllegalStateException("The state of the current instance cannot connect to SSH: " + instanceState);
         }
         return new InstanceSsh(this, getSshIdentity());
     }
 
-    public Instance.LifecycleState getInstanceState() {
+    /**
+     * 获取实例当前状态.
+     * <p> 实例可有以下状态:
+     *      <ul>
+     *          <li> Moving: 实例正在转移中;
+     *          <li> Provisioning: 实例正在预分配中(正在创建实例);
+     *          <li> Running: 实例正在运行中;
+     *          <li> Starting: 实例正在启动中;
+     *          <li> Stopping: 实例正在停止中;
+     *          <li> Stopped: 实例已停止运行;
+     *          <li> CreatingImage: 正在通过实例构建镜像;
+     *          <li> Terminating: 正在终止实例(正在删除实例);
+     *          <li> Terminated: 实例已经终止(已删除实例)
+     *      </ul>
+     * @return 返回实例状态.
+     */
+    public String getInstanceState() {
         GetInstanceResponse instance = computeClient.getInstance(GetInstanceRequest.builder()
                 .instanceId(instanceId)
                 .build());
 
-        return instance.getInstance().getLifecycleState();
+        return instance.getInstance().getLifecycleState().name();
     }
 
     /**
      * 对实例执行操作.
      * @param action 操作类型.
-     * @return 如果成功, 返回实例最新状态.
+     * @return 如果成功, 返回实例最新状态(返回值意义见 {@link #getInstanceState()} 文档).
      */
-    public Instance.LifecycleState execAction(InstanceAction action) {
+    public String execAction(InstanceAction action) {
         InstanceActionResponse actionResponse = computeClient.instanceAction(InstanceActionRequest.builder()
                 .instanceId(instanceId)
                 .action(action.getActionValue())
                 .build());
-        return actionResponse.getInstance().getLifecycleState();
+        return actionResponse.getInstance().getLifecycleState().name();
     }
 
     /**
