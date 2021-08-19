@@ -1,10 +1,11 @@
 package net.lamgc.oracle.sentry.oci.compute.ssh;
 
-import com.google.common.base.Strings;
 import com.google.gson.*;
 import org.apache.sshd.common.config.keys.KeyUtils;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.apache.sshd.common.config.keys.PublicKeyEntryDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,8 @@ import java.util.Collections;
  */
 public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>, JsonDeserializer<SshAuthInfo> {
 
+    private final static Logger log = LoggerFactory.getLogger(SshAuthInfoSerializer.class);
+
     /**
      * 本类唯一实例.
      * <p> 序列化器支持多用.
@@ -33,12 +36,9 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
 
     @Override
     public SshAuthInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        if (!json.isJsonObject()) {
-            throw new JsonParseException("It should be a JsonObject");
-        }
         JsonObject infoObject = json.getAsJsonObject();
         String type = getFieldToStringOrFail(infoObject, "authType");
-        SshAuthInfo.AuthType authType = SshAuthInfo.AuthType.valueOf(type.toUpperCase());
+        SshAuthInfo.AuthType authType = getAuthType(type);
         SshAuthInfo info;
         if (authType == SshAuthInfo.AuthType.PASSWORD) {
             PasswordAuthInfo pswAuthInfo = new PasswordAuthInfo();
@@ -56,12 +56,12 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
         }
         info.setUsername(getFieldToStringOrFail(infoObject, "username"));
         try {
-            info.setServerKey(decodeSshPublicKey(
-                    infoObject.has("serverKey") && infoObject.get("serverKey").isJsonPrimitive() ?
-                            infoObject.get("serverKey").getAsString() :
-                            null));
+            if (infoObject.has("serverKey") && infoObject.get("serverKey").isJsonPrimitive()) {
+                info.setServerKey(decodeSshPublicKey(infoObject.get("serverKey").getAsString()));
+            }
         } catch (GeneralSecurityException | IOException e) {
-            throw new JsonParseException(e);
+            info.setServerKey(null);
+            log.error("解析 ServerKey 时发生错误, 该 ServerKey 将为空.(后续连接需进行首次连接认证.)", e);
         }
         return info;
     }
@@ -69,13 +69,6 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
     @Override
     public JsonElement serialize(SshAuthInfo src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject json = new JsonObject();
-        json.addProperty("authType", src.getType().toString());
-        json.addProperty("username", src.getUsername());
-        try {
-            json.addProperty("serverKey", encodeSshPublicKey(src.getServerKey()));
-        } catch (IOException e) {
-            throw new JsonParseException(e);
-        }
         if (src instanceof PasswordAuthInfo info) {
             json.addProperty("password", info.getPassword());
         } else if (src instanceof PublicKeyAuthInfo info) {
@@ -88,6 +81,14 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
         } else {
             throw new JsonParseException("Unsupported type");
         }
+
+        json.addProperty("authType", src.getType().toString());
+        json.addProperty("username", src.getUsername());
+        if (src.getServerKey() != null) {
+            json.addProperty("serverKey", encodeSshPublicKey(src.getServerKey()));
+        } else {
+            json.add("serverKey", JsonNull.INSTANCE);
+        }
         return json;
     }
 
@@ -99,10 +100,6 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
     }
 
     private PublicKey decodeSshPublicKey(String publicKeyString) throws GeneralSecurityException, IOException {
-        if (Strings.isNullOrEmpty(publicKeyString)) {
-            return null;
-        }
-
         String[] strings = publicKeyString.split(" ", 3);
 
         @SuppressWarnings("unchecked") PublicKeyEntryDecoder<PublicKey, ?> decoder =
@@ -110,14 +107,22 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
         return decoder.decodePublicKey(null, strings[0], Base64.getDecoder().decode(strings[1]), Collections.emptyMap());
     }
 
-    private String encodeSshPublicKey(PublicKey key) throws IOException {
-        if (key == null) {
+    private String encodeSshPublicKey(PublicKey key) {
+        try {
+            StringBuilder builder = new StringBuilder();
+            PublicKeyEntry.appendPublicKeyEntry(builder, key);
+            return builder.toString();
+        } catch (IOException ignored) {
+        }
+        return null;
+    }
+
+    private SshAuthInfo.AuthType getAuthType(String type) {
+        try {
+            return SshAuthInfo.AuthType.valueOf(type.toUpperCase());
+        } catch (IllegalArgumentException e) {
             return null;
         }
-
-        StringBuilder builder = new StringBuilder();
-        PublicKeyEntry.appendPublicKeyEntry(builder, key);
-        return builder.toString();
     }
 
 }
