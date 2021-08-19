@@ -19,13 +19,13 @@ public final class ScriptManager {
 
     private final Set<ScriptLoader> loaders = new HashSet<>();
     private final File scriptsLocation;
-    private final ScriptComponent context;
+    private final ScriptComponents context;
 
     private final Map<ScriptInfo, Script> scripts = new ConcurrentHashMap<>();
 
-    public ScriptManager(File scriptsLocation, ScriptComponent context) {
+    public ScriptManager(File scriptsLocation, ScriptComponents components) {
         this.scriptsLocation = scriptsLocation;
-        this.context = context;
+        this.context = components;
         loadScriptLoaders();
     }
 

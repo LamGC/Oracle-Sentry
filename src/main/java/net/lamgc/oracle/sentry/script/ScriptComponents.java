@@ -6,7 +6,7 @@ import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
 /**
  * @author LamGC
  */
-public final record ScriptComponent(
+public final record ScriptComponents(
         ScriptHttpClient HTTP,
         ComputeInstanceManager InstanceManager
 ) {
