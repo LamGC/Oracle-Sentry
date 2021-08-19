@@ -2,7 +2,7 @@ package net.lamgc.oracle.sentry;
 
 import com.google.common.base.Throwables;
 import com.oracle.bmc.auth.AuthenticationDetailsProvider;
-import net.lamgc.oracle.sentry.script.ScriptComponent;
+import net.lamgc.oracle.sentry.script.ScriptComponents;
 import net.lamgc.oracle.sentry.script.ScriptManager;
 import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -93,7 +93,7 @@ public class ApplicationInitiation {
     @Bean("sentry.script.manager")
     @Autowired
     public ScriptManager initialScriptManager(ComputeInstanceManager instanceManager) {
-        ScriptComponent context = new ScriptComponent(new ScriptHttpClient(HttpClientBuilder.create()
+        ScriptComponents context = new ScriptComponents(new ScriptHttpClient(HttpClientBuilder.create()
                 .build()),
                 instanceManager);
 
