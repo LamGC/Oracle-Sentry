@@ -1,7 +1,5 @@
 package net.lamgc.oracle.sentry.script.groovy.trigger;
 
-import groovy.lang.DelegatesTo;
-
 /**
  * @author LamGC
  */
@@ -13,7 +11,5 @@ public interface GroovyTrigger {
      * @param task 触发器需要执行的任务.
      */
     void run(Runnable task);
-
-
 
 }
