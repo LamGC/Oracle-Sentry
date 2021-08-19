@@ -86,6 +86,9 @@ public class ComputeInstanceManager {
                     .compartmentId(compartmentId)
                     .build());
             for (Instance instance : listInstances.getItems()) {
+                if (instance.getLifecycleState() == Instance.LifecycleState.Terminated) {
+                    continue;
+                }
                 ComputeInstance computeInstance = new ComputeInstance(this, instance.getId(),
                         provider.getUserId(), compartmentId, instance.getImageId(), provider);
 
