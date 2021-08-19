@@ -1,5 +1,6 @@
 package net.lamgc.oracle.sentry;
 
+import com.google.common.base.Throwables;
 import com.oracle.bmc.auth.AuthenticationDetailsProvider;
 import net.lamgc.oracle.sentry.script.ScriptComponent;
 import net.lamgc.oracle.sentry.script.ScriptManager;
@@ -9,13 +10,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.io.Resource;
 import org.springframework.lang.NonNull;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * @author LamGC
@@ -98,6 +103,7 @@ public class ApplicationInitiation {
     }
 
     @PostConstruct
+    @Order(1)
     private void initialEnvironment() throws IOException {
         String[] directors = new String[] {
                 "./config",
@@ -130,4 +136,28 @@ public class ApplicationInitiation {
         }
         log.debug("目录检查完成.");
     }
+
+    @Autowired
+    private void initialConfigurationFile(ApplicationContext context) {
+        File configFile = new File("config/application.yml");
+        if (!configFile.exists()) {
+            Resource resource = context.getResource("application.yml");
+            if (!resource.exists()) {
+                log.error("默认配置初始化失败(包内资源不存在).");
+                return;
+            }
+
+            try {
+                Files.copy(resource.getInputStream(), configFile.toPath());
+                log.info("默认配置文件已初始化完成, 如果调整配置, 可修改配置文件中的相应配置项.");
+            } catch (IOException e) {
+                log.error("初始化默认配置文件失败!(Path: {})\n{}",
+                        configFile.getAbsolutePath(), Throwables.getStackTraceAsString(e));
+            }
+        } else {
+            log.debug("配置文件存在, 无需初始化.");
+        }
+
+    }
+
 }
