@@ -1,6 +1,9 @@
 package net.lamgc.oracle.sentry.script.groovy.trigger;
 
 /**
+ * Groovy 脚本的触发器接口.
+ * <p> 实现该接口并添加 {@link TriggerName} 注解后,
+ * 添加到 SPI 实现列表, 即可作为一个 Trigger.
  * @author LamGC
  */
 public interface GroovyTrigger {
