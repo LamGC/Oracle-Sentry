@@ -22,7 +22,7 @@ public interface ScriptLoader {
      * @return 返回脚本对象.
      * @throws Exception 当 Loader 抛出异常时, 将视为脚本加载失败, 该脚本跳过加载.
      */
-    Script loadScript(ScriptComponent context, File scriptFile) throws Exception;
+    Script loadScript(ScriptComponents context, File scriptFile) throws Exception;
 
     /**
      * 获取脚本信息.

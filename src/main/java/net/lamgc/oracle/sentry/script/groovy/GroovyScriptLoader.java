@@ -4,7 +4,7 @@ import com.google.common.base.Throwables;
 import groovy.lang.GroovyClassLoader;
 import groovy.util.DelegatingScript;
 import net.lamgc.oracle.sentry.script.Script;
-import net.lamgc.oracle.sentry.script.ScriptComponent;
+import net.lamgc.oracle.sentry.script.ScriptComponents;
 import net.lamgc.oracle.sentry.script.ScriptInfo;
 import net.lamgc.oracle.sentry.script.ScriptLoader;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -47,7 +47,7 @@ public class GroovyScriptLoader implements ScriptLoader {
     }
 
     @Override
-    public Script loadScript(ScriptComponent context, File scriptFile) throws IOException {
+    public Script loadScript(ScriptComponents context, File scriptFile) throws IOException {
         Class<?> scriptClass = scriptClassLoader.parseClass(scriptFile);
         if (!DelegatingScript.class.isAssignableFrom(scriptClass)) {
             return null;
