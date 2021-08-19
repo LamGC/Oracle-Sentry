@@ -1,9 +1,6 @@
 package net.lamgc.oracle.sentry.oci.compute.ssh;
 
-import org.apache.sshd.common.config.keys.FilePasswordProvider;
-
 import java.io.File;
-import java.security.KeyPair;
 
 /**
  * 公钥登录认证配置.

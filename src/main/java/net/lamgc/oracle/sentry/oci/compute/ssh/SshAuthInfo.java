@@ -3,7 +3,6 @@ package net.lamgc.oracle.sentry.oci.compute.ssh;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.security.PublicKey;
 
 /**

@@ -3,9 +3,7 @@ package net.lamgc.oracle.sentry.script.groovy;
 import com.google.common.base.Strings;
 import net.lamgc.oracle.sentry.script.groovy.trigger.GroovyTrigger;
 import net.lamgc.oracle.sentry.script.groovy.trigger.TriggerName;
-import org.springframework.scheduling.Trigger;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
