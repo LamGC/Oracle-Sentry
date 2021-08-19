@@ -10,6 +10,8 @@ import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Groovy 脚本语言的触发器提供者.
+ * <p> 根据脚本需要创建并注册触发器.
  * @author LamGC
  */
 public class GroovyTriggerProvider {
