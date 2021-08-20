@@ -15,11 +15,8 @@ public abstract class SshAuthInfo {
     private final static Logger log = LoggerFactory.getLogger(SshAuthInfo.class);
 
     private String username;
-    /**
-     * 使用 Sha256 计算的密钥指纹.
-     */
     private PublicKey serverKey;
-
+    private int port;
     private SshAuthIdentityProvider provider;
 
     /**
@@ -63,6 +60,22 @@ public abstract class SshAuthInfo {
      */
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    /**
+     * 设置 SSH 连接端口.
+     * @param port SSH 端口号.
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    /**
+     * 获取 SSH 端口号.
+     * @return 返回 SSH 端口号.
+     */
+    public int getPort() {
+        return port;
     }
 
     /**

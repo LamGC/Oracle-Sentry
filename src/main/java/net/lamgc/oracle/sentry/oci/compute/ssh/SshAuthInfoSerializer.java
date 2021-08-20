@@ -56,6 +56,24 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
             throw new JsonParseException("Unsupported authentication type: " + authType);
         }
         info.setUsername(getFieldToStringOrFail(infoObject, "username"));
+        String portStr = getFieldToString(infoObject, "port");
+        if (portStr != null) {
+            try {
+                int port = Integer.parseInt(portStr);
+                if (checkPortNumber(port)) {
+                    info.setPort(port);
+                } else {
+                    log.warn("端口号非法, 将使用默认端口号.(Input: {})", port);
+                    info.setPort(22);
+                }
+            } catch (NumberFormatException e) {
+                log.warn("端口号无法转换成数字, 端口号将使用默认端口号.(Input: {})", portStr);
+                info.setPort(22);
+            }
+        } else {
+            info.setPort(22);
+        }
+
         String serverKeyStr = getFieldToString(infoObject, "serverKey");
         if (!Strings.isNullOrEmpty(serverKeyStr)) {
             try {
@@ -88,12 +106,17 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
 
         json.addProperty("authType", src.getType().toString());
         json.addProperty("username", src.getUsername());
+        json.addProperty("port", src.getPort());
         if (src.getServerKey() != null) {
             json.addProperty("serverKey", encodeSshPublicKey(src.getServerKey()));
         } else {
             json.add("serverKey", JsonNull.INSTANCE);
         }
         return json;
+    }
+
+    private boolean checkPortNumber(int port) {
+        return port >= 0 && port <= 65535;
     }
 
     private String getFieldToStringOrFail(JsonObject object, String field) {

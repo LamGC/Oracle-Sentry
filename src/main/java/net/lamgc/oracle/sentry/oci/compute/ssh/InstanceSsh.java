@@ -65,7 +65,8 @@ public class InstanceSsh implements AutoCloseable {
         if (instancePublicIps.stream().findFirst().isEmpty()) {
             throw new IllegalStateException("Instance has no public IP available.");
         }
-        String connectUri = "ssh://" + authInfo.getUsername() + "@" + instancePublicIps.stream().findFirst().get() + ":22";
+        String connectUri = "ssh://" + authInfo.getUsername() + "@" +
+                instancePublicIps.stream().findFirst().get() + ":" + authInfo.getPort();
         log.info("SSH 正在连接: {}", connectUri);
         ConnectFuture connect = sshClient.connect(connectUri);
         connect.verify();

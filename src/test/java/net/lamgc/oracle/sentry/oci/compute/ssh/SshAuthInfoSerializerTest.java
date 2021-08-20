@@ -44,10 +44,6 @@ class SshAuthInfoSerializerTest {
         return gson.fromJson(new InputStreamReader(resource, StandardCharsets.UTF_8), JsonObject.class);
     }
 
-    private boolean matchTestsInfo(String name, JsonObject object) {
-        return getTestsInfo(name).equals(object);
-    }
-
     @Test
     public void deserializePasswordTest() {
         SshAuthInfo info = gson.fromJson(getTestsInfo("StandardPassword"), SshAuthInfo.class);
@@ -69,6 +65,39 @@ class SshAuthInfoSerializerTest {
         } else {
             fail("The type of the parsing result does not match: " + info.getClass());
         }
+    }
+
+    @Test
+    public void deserializeBadPortNumberTest() {
+        SshAuthInfo info = gson.fromJson(getTestsInfo("BadPortValue-NonNumber"), SshAuthInfo.class);
+
+        assertTrue(info instanceof PasswordAuthInfo);
+        assertEquals("opc", info.getUsername());
+        assertEquals("123456", ((PasswordAuthInfo) info).getPassword());
+        assertEquals("SHA256:qBu2jRXM6Wog/jWUJJ0WLTMb3UdDGAmYEVZQNZdFZNM", KeyUtils.getFingerPrint(info.getServerKey()));
+        assertEquals(22, info.getPort());
+    }
+
+    @Test
+    public void deserializePortNumberOutOfBoundTest() {
+        SshAuthInfo info = gson.fromJson(getTestsInfo("BadPortValue-OutOfBound"), SshAuthInfo.class);
+
+        assertTrue(info instanceof PasswordAuthInfo);
+        assertEquals("opc", info.getUsername());
+        assertEquals("123456", ((PasswordAuthInfo) info).getPassword());
+        assertEquals("SHA256:qBu2jRXM6Wog/jWUJJ0WLTMb3UdDGAmYEVZQNZdFZNM", KeyUtils.getFingerPrint(info.getServerKey()));
+        assertEquals(22, info.getPort());
+    }
+
+    @Test
+    public void deserializePortNumberOutOfBoundMinusTest() {
+        SshAuthInfo info = gson.fromJson(getTestsInfo("BadPortValue-OutOfBound-minus"), SshAuthInfo.class);
+
+        assertTrue(info instanceof PasswordAuthInfo);
+        assertEquals("opc", info.getUsername());
+        assertEquals("123456", ((PasswordAuthInfo) info).getPassword());
+        assertEquals("SHA256:qBu2jRXM6Wog/jWUJJ0WLTMb3UdDGAmYEVZQNZdFZNM", KeyUtils.getFingerPrint(info.getServerKey()));
+        assertEquals(22, info.getPort());
     }
 
     @Test
@@ -107,10 +136,17 @@ class SshAuthInfoSerializerTest {
                 gson.fromJson(getTestsInfo("UnsupportedJsonType"), SshAuthInfo.class));
     }
 
+    @Test
+    public void deserializeBadRequiredFieldJsonTypeTest() {
+        assertThrows(JsonParseException.class, () ->
+                gson.fromJson(getTestsInfo("BadRequiredFieldType"), SshAuthInfo.class));
+    }
+
     private void initialSshAuthInfo(SshAuthInfo info) {
         try {
             KeyPair pair = KeyUtils.generateKeyPair("ssh-rsa", 3072);
             info.setServerKey(pair.getPublic());
+            info.setPort(new Random().nextInt(65536));
             info.setUsername("linux");
             if (info instanceof PasswordAuthInfo psw) {
                 psw.setPassword(String.valueOf(new Random().nextLong()));
@@ -149,6 +185,7 @@ class SshAuthInfoSerializerTest {
         assertEquals(SshAuthInfo.AuthType.PASSWORD.name(), getOrFailField(json, "authType"));
         assertEquals(KeyUtils.getFingerPrint(info.getServerKey()),
                 KeyUtils.getFingerPrint(decodeSshPublicKey(getOrFailField(json, "serverKey"))));
+        assertEquals(info.getPort(), Integer.parseInt(getOrFailField(json, "port")));
         assertEquals(info.getUsername(), getOrFailField(json, "username"));
 
         assertEquals(info.getPassword(), getOrFailField(json, "password"));
@@ -164,6 +201,7 @@ class SshAuthInfoSerializerTest {
         assertEquals(KeyUtils.getFingerPrint(info.getServerKey()),
                 KeyUtils.getFingerPrint(decodeSshPublicKey(getOrFailField(json, "serverKey"))));
         assertEquals(info.getUsername(), getOrFailField(json, "username"));
+        assertEquals(info.getPort(), Integer.parseInt(getOrFailField(json, "port")));
 
         assertEquals(info.getPrivateKeyPath().getCanonicalFile(), new File(getOrFailField(json, "privateKeyPath")));
         assertEquals(info.getKeyPassword(), getOrFailField(json, "keyPassword"));
@@ -180,6 +218,7 @@ class SshAuthInfoSerializerTest {
         assertEquals(SshAuthInfo.AuthType.PASSWORD.name(), getOrFailField(json, "authType"));
         assertTrue(json.get("serverKey").isJsonNull());
         assertEquals(info.getUsername(), getOrFailField(json, "username"));
+        assertEquals(info.getPort(), Integer.parseInt(getOrFailField(json, "port")));
 
         assertEquals(info.getPassword(), getOrFailField(json, "password"));
     }
@@ -212,6 +251,7 @@ class SshAuthInfoSerializerTest {
         assertEquals(SshAuthInfo.AuthType.PASSWORD.name(), getOrFailField(json, "authType"));
         assertTrue(json.get("serverKey").isJsonNull());
         assertEquals(info.getUsername(), getOrFailField(json, "username"));
+        assertEquals(info.getPort(), Integer.parseInt(getOrFailField(json, "port")));
 
         assertEquals(info.getPassword(), getOrFailField(json, "password"));
     }
