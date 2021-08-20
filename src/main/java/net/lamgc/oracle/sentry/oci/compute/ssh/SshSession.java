@@ -1,6 +1,7 @@
 package net.lamgc.oracle.sentry.oci.compute.ssh;
 
 import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.sftp.client.SftpClientFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -31,6 +32,17 @@ public class SshSession implements Closeable {
      */
     public CommandExecSession createExecSession(String command) throws IOException {
         return new CommandExecSession(clientSession.createExecChannel(command));
+    }
+
+    /**
+     * 创建 Sftp 会话.
+     * <p> 可通过会话操作 Sftp.
+     * @return 返回 Sftp 会话.
+     * @throws IOException 如果创建失败, 将抛出异常.
+     */
+    public SftpSession createSftpSession() throws IOException {
+        SftpClientFactory factory = SftpClientFactory.instance();
+        return new SftpSession(factory.createSftpClient(clientSession));
     }
 
     /**
