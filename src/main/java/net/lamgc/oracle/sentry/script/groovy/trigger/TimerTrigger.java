@@ -2,6 +2,7 @@ package net.lamgc.oracle.sentry.script.groovy.trigger;
 
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import groovy.lang.Closure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -38,7 +39,7 @@ public class TimerTrigger implements GroovyTrigger {
     }
 
     @Override
-    public void run(Runnable runnable) {
+    public void run(Closure<?> runnable) {
         if (trigger == null) {
             if (!log.isDebugEnabled()) {
                 log.warn("脚本尚未设置 Cron 时间表达式, 任务将不会执行(堆栈信息请检查调试级别日志).");
@@ -57,7 +58,21 @@ public class TimerTrigger implements GroovyTrigger {
             return;
         }
 
-        SCHEDULER.schedule(runnable, trigger);
+        SCHEDULER.schedule(new TimerTaskRunnable(runnable), trigger);
+    }
+
+    private static class TimerTaskRunnable implements Runnable {
+
+        private final Closure<?> closure;
+
+        private TimerTaskRunnable(Closure<?> closure) {
+            this.closure = closure;
+        }
+
+        @Override
+        public void run() {
+            closure.call();
+        }
     }
 
 }

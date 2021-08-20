@@ -1,6 +1,7 @@
 package net.lamgc.oracle.sentry.script.groovy.trigger;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import groovy.lang.Closure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,7 @@ public class OnceTrigger implements GroovyTrigger {
             .build());
 
     @Override
-    public void run(Runnable task) {
+    public void run(Closure<?> task) {
         EXECUTOR.execute(task);
     }
 }
