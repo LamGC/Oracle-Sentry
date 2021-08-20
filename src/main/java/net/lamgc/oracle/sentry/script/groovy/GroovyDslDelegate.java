@@ -16,17 +16,11 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 public class GroovyDslDelegate implements Script {
 
     private final GroovyScriptInfo scriptInfo = new GroovyScriptInfo();
-    private final ScriptHttpClient HTTP;
-    private final ComputeInstanceManager InstanceManager;
 
     /**
      * 构建一个 DSL Delegate, 并传入可操作对象.
-     * @param httpClient Http 客户端.
-     * @param instanceManager 实例管理器.
      */
-    public GroovyDslDelegate(ScriptHttpClient httpClient, ComputeInstanceManager instanceManager) {
-        HTTP = httpClient;
-        InstanceManager = instanceManager;
+    public GroovyDslDelegate() {
     }
 
     /**

@@ -1,6 +1,7 @@
 package net.lamgc.oracle.sentry.script.groovy;
 
 import com.google.common.base.Throwables;
+import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.util.DelegatingScript;
 import net.lamgc.oracle.sentry.script.Script;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,8 +58,9 @@ public class GroovyScriptLoader implements ScriptLoader {
             Constructor<? extends DelegatingScript> constructor =
                     scriptClass.asSubclass(DelegatingScript.class).getConstructor();
             DelegatingScript newScriptObject = constructor.newInstance();
-            GroovyDslDelegate dslDelegate = new GroovyDslDelegate(context.HTTP(), context.InstanceManager());
+            GroovyDslDelegate dslDelegate = new GroovyDslDelegate();
             newScriptObject.setDelegate(dslDelegate);
+            newScriptObject.setBinding(createBinding(context));
             newScriptObject.run();
             scriptInfoMap.put(dslDelegate, dslDelegate.getScriptInfo());
             return dslDelegate;
@@ -70,5 +73,20 @@ public class GroovyScriptLoader implements ScriptLoader {
     @Override
     public ScriptInfo getScriptInfo(Script script) {
         return scriptInfoMap.get(script);
+    }
+
+    private static Binding createBinding(ScriptComponents components) {
+        Binding binding = new Binding();
+        for (Field field : components.getClass().getDeclaredFields()) {
+            try {
+                String name = field.getName();
+                field.setAccessible(true);
+                Object o = field.get(components);
+                binding.setProperty(name, o);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return binding;
     }
 }
