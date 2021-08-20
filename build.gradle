@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'net.lamgc.oracle'
-version '0.0.1-alpha-SNAPSHOT'
+version '0.1.0'
 compileJava.sourceCompatibility = JavaVersion.VERSION_16
 
 repositories {
@@ -54,7 +54,6 @@ javadoc {
 }
 
 jacoco {
-    version "0.8.7"
     reportsDir file("$buildDir/jacoco/reports")
 }
 
