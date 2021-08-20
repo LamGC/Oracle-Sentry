@@ -1,5 +1,6 @@
 package net.lamgc.oracle.sentry.oci.compute.ssh;
 
+import com.google.common.base.Strings;
 import com.google.gson.*;
 import org.apache.sshd.common.config.keys.KeyUtils;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
@@ -49,19 +50,22 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
             String privateKeyPath = getFieldToStringOrFail(infoObject, "privateKeyPath");
             File privateKeyFile = new File(privateKeyPath);
             publicKeyInfo.setPrivateKeyPath(privateKeyFile);
-            publicKeyInfo.setKeyPassword(getFieldToStringOrFail(infoObject, "keyPassword"));
+            publicKeyInfo.setKeyPassword(getFieldToString(infoObject, "keyPassword"));
             info = publicKeyInfo;
         } else {
             throw new JsonParseException("Unsupported authentication type: " + authType);
         }
         info.setUsername(getFieldToStringOrFail(infoObject, "username"));
-        try {
-            if (infoObject.has("serverKey") && infoObject.get("serverKey").isJsonPrimitive()) {
-                info.setServerKey(decodeSshPublicKey(infoObject.get("serverKey").getAsString()));
+        String serverKeyStr = getFieldToString(infoObject, "serverKey");
+        if (!Strings.isNullOrEmpty(serverKeyStr)) {
+            try {
+                info.setServerKey(decodeSshPublicKey(serverKeyStr));
+            } catch (GeneralSecurityException | IOException e) {
+                info.setServerKey(null);
+                log.error("解析 ServerKey 时发生错误, 该 ServerKey 将为空.(后续连接需进行首次连接认证.)", e);
             }
-        } catch (GeneralSecurityException | IOException e) {
+        } else {
             info.setServerKey(null);
-            log.error("解析 ServerKey 时发生错误, 该 ServerKey 将为空.(后续连接需进行首次连接认证.)", e);
         }
         return info;
     }
@@ -93,8 +97,15 @@ public final class SshAuthInfoSerializer implements JsonSerializer<SshAuthInfo>,
     }
 
     private String getFieldToStringOrFail(JsonObject object, String field) {
-        if (!object.has(field)) {
+        if (!object.has(field) || !object.get(field).isJsonPrimitive()) {
             throw new JsonParseException("Missing field: " + field);
+        }
+        return object.get(field).getAsString();
+    }
+
+    private String getFieldToString(JsonObject object, String field) {
+        if (!object.has(field) || !object.get(field).isJsonPrimitive()) {
+            return null;
         }
         return object.get(field).getAsString();
     }
