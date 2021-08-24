@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'net.lamgc.oracle'
-version '0.1.0'
+version '0.1.1'
 compileJava.sourceCompatibility = JavaVersion.VERSION_16
 
 repositories {
