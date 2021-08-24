@@ -25,6 +25,7 @@ public class TimerTrigger implements GroovyTrigger {
                 .setNameFormat("Groovy-TimerTrigger-%d")
                 .build());
         SCHEDULER.setErrorHandler(t -> log.error("脚本执行时发生异常.", t));
+        SCHEDULER.initialize();
     }
 
     /**
