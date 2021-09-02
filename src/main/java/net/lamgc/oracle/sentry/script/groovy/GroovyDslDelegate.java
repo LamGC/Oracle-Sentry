@@ -7,10 +7,6 @@ import net.lamgc.oracle.sentry.script.ScriptInfo;
 import net.lamgc.oracle.sentry.script.groovy.trigger.GroovyTrigger;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * Groovy DSL 脚本的父类.
  * @author LamGC
@@ -31,6 +27,7 @@ public class GroovyDslDelegate implements Script {
 
     /**
      * 注册触发器.
+     * <p> 注意: 如果脚本尚未初始化完成, 将无法注册触发器, 可通过 {@link #isInitialed()} 检查是否已经完成初始化.
      * @param triggerName 触发器名称.
      * @param closure 待执行闭包.
      */
@@ -53,5 +50,13 @@ public class GroovyDslDelegate implements Script {
     @Override
     public ScriptInfo getScriptInfo() {
         return scriptInfo;
+    }
+
+    /**
+     * 检查脚本当前是否已经初始化完成.
+     * @return 如果脚本已经初始化, 本方法将返回 {@code true}.
+     */
+    public final boolean isInitialed() {
+        return scriptLoader.isInitialed(this);
     }
 }
