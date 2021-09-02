@@ -11,7 +11,8 @@ import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
  */
 public final record ScriptComponents(
         ScriptHttpClient HTTP,
-        ComputeInstanceManager InstanceManager
+        ComputeInstanceManager InstanceManager,
+        ScriptLoggerFactory loggerFactory
 ) {
 
 }

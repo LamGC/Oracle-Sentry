@@ -32,6 +32,8 @@ dependencies {
     implementation "org.bouncycastle:bcpg-jdk15on:${bouncyCastleVer}"
     implementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVer}"
 
+    implementation 'cglib:cglib:3.3.0'
+
     implementation "net.i2p.crypto:eddsa:0.3.0"
 
     implementation 'org.codehaus.groovy:groovy-all:3.0.7'

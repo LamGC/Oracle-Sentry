@@ -2,10 +2,10 @@
 <configuration debug="false">
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <target>System.out</target>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
+        <filter class="net.lamgc.oracle.sentry.common.logging.NoMarkerFilter"/>
+        <filter class="net.lamgc.oracle.sentry.common.logging.LevelRangeFilter">
+            <minLevel>DEBUG</minLevel>
+            <maxLevel>INFO</maxLevel>
         </filter>
         <encoder>
             <pattern>[%d{HH:mm:ss.SSS} %5level][%logger][%thread]: %msg%n</pattern>
@@ -13,6 +13,7 @@
     </appender>
     <appender name="stderr" class="ch.qos.logback.core.ConsoleAppender">
         <target>System.err</target>
+        <filter class="net.lamgc.oracle.sentry.common.logging.NoMarkerFilter"/>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
         </filter>
@@ -23,6 +24,7 @@
 
     <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>./logs/latest.log</file>
+        <filter class="net.lamgc.oracle.sentry.common.logging.NoMarkerFilter"/>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>TRACE</level>
             <onMatch>DENY</onMatch>
@@ -37,11 +39,62 @@
         </rollingPolicy>
     </appender>
 
+    <appender name="stdout_script" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <filter class="net.lamgc.oracle.sentry.common.logging.MarkerFilter">
+            <markerName>Script</markerName>
+        </filter>
+        <filter class="net.lamgc.oracle.sentry.common.logging.LevelRangeFilter">
+            <minLevel>DEBUG</minLevel>
+            <maxLevel>INFO</maxLevel>
+        </filter>
+        <encoder>
+            <pattern>[%d{HH:mm:ss.SSS} %5level][Script][%logger]: %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="stderr_script" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.err</target>
+        <filter class="net.lamgc.oracle.sentry.common.logging.MarkerFilter">
+            <markerName>Script</markerName>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <encoder>
+            <pattern>[%d{HH:mm:ss.SSS} %5level][Script][%logger]: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="logFile_script" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./logs/latest-script.log</file>
+        <filter class="net.lamgc.oracle.sentry.common.logging.MarkerFilter">
+            <markerName>Script</markerName>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>TRACE</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>[%d{HH:mm:ss.SSS} %5level][Script][%logger]: %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/run-script-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
     <logger name="com.oracle.bmc" level="WARN"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.apache.http" level="INFO"/>
     <logger name="com.oracle.bmc.http.ApacheConfigurator" level="ERROR"/>
     <root>
         <appender-ref ref="stdout" />
         <appender-ref ref="stderr" />
         <appender-ref ref="logFile" />
+
+        <appender-ref ref="stdout_script" />
+        <appender-ref ref="stderr_script" />
+        <appender-ref ref="logFile_script" />
     </root>
 </configuration>

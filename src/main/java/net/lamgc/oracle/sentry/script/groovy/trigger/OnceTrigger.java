@@ -2,7 +2,6 @@ package net.lamgc.oracle.sentry.script.groovy.trigger;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import groovy.lang.Closure;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
@@ -14,13 +13,12 @@ import java.util.concurrent.Executors;
  */
 @TriggerName("once")
 public class OnceTrigger implements GroovyTrigger {
-
-    private final static Logger log = LoggerFactory.getLogger(OnceTrigger.class);
     private final static ExecutorService EXECUTOR = Executors.newFixedThreadPool(
             Runtime.getRuntime().availableProcessors(),
             new ThreadFactoryBuilder()
                     .setNameFormat("GroovyOnceExec-%d")
-                    .setUncaughtExceptionHandler((t, e) -> log.error("脚本执行时发生未捕获异常.", e))
+                    .setUncaughtExceptionHandler((t, e) -> LoggerFactory.getLogger(OnceTrigger.class)
+                            .error("脚本执行时发生未捕获异常.", e))
             .build());
 
     @Override
