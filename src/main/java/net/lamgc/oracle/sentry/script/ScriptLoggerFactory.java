@@ -9,10 +9,8 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 脚本日志记录器工厂.
@@ -48,6 +46,9 @@ public class ScriptLoggerFactory implements ScriptComponentFactory<Logger> {
                 "isErrorEnabled"
         );
 
+        private final static ConcurrentHashMap<Method, Method> METHOD_CACHE_MAP =
+                new ConcurrentHashMap<>(PROXY_METHOD_NAMES.size(), 1);
+
         private final Logger targetLog;
         private final Class<? extends Logger> logClass;
 
@@ -58,21 +59,39 @@ public class ScriptLoggerFactory implements ScriptComponentFactory<Logger> {
 
         @Override
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-            if (PROXY_METHOD_NAMES.contains(method.getName())) {
+            if (METHOD_CACHE_MAP.contains(method)) {
+                return METHOD_CACHE_MAP.get(method).invoke(targetLog, insertParameterToArray(args, SCRIPT_MARKER));
+            } else if (PROXY_METHOD_NAMES.contains(method.getName())) {
                 Class<?>[] types = method.getParameterTypes();
-                List<Class<?>> typeList = new ArrayList<>(Arrays.asList(types));
-                typeList.add(0, Marker.class);
                 if (types.length != 0 && !Marker.class.isAssignableFrom(types[0])) {
-                    Class<?>[] realMethodParamTypes = typeList.toArray(new Class<?>[0]);
+                    Class<?>[] realMethodParamTypes = insertTypeToArray(types, Marker.class);
                     Method realMethod = logClass.getDeclaredMethod(method.getName(), realMethodParamTypes);
-                    List<Object> paramList = new ArrayList<>(Arrays.asList(args));
-                    paramList.add(0, SCRIPT_MARKER);
-                    Object[] params = paramList.toArray(new Object[0]);
-                    realMethod.invoke(targetLog, params);
+                    METHOD_CACHE_MAP.put(method, realMethod);
+                    realMethod.invoke(targetLog, insertParameterToArray(args, SCRIPT_MARKER));
                     return null;
                 }
             }
             return proxy.invoke(targetLog, args);
+        }
+        
+        public Object[] insertParameterToArray(Object[] arr, Object newElement) {
+            if (arr.length == 0) {
+                return new Object[] {newElement};
+            }
+            Object[] newArr = new Object[arr.length + 1];
+            newArr[0] = newElement;
+            System.arraycopy(arr, 0, newArr, 1, arr.length);
+            return newArr;
+        }
+
+        public Class<?>[] insertTypeToArray(Class<?>[] arr, Class<?> newElement) {
+            if (arr.length == 0) {
+                return new Class<?>[] {newElement};
+            }
+            Class<?>[] newArr = new Class<?>[arr.length + 1];
+            newArr[0] = newElement;
+            System.arraycopy(arr, 0, newArr, 1, arr.length);
+            return newArr;
         }
     }
 
