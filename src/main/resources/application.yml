@@ -14,3 +14,14 @@ oracle:
       # 首次连接认证策略
       # 支持 confirm(询问) accept(接受) reject(拒绝)
       authenticationPolicy: 'confirm'
+    # SSH 转发设定
+    forwarding:
+      # X11 转发
+      X11:
+        enable: false
+      # SSH-Agent 转发
+      agent:
+        enable: false
+      # TCP 转发
+      tcp:
+        enable: true

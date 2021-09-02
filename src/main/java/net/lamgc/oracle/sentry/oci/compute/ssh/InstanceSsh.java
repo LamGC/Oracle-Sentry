@@ -1,6 +1,7 @@
 package net.lamgc.oracle.sentry.oci.compute.ssh;
 
 import com.google.common.base.Strings;
+import net.lamgc.oracle.sentry.Constants;
 import net.lamgc.oracle.sentry.oci.compute.ComputeInstance;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.future.AuthFuture;
@@ -40,6 +41,7 @@ public class InstanceSsh implements AutoCloseable {
         this.authInfo = Objects.requireNonNull(authInfo);
 
         sshClient = SshClient.setUpDefaultClient();
+        sshClient.setForwardingFilter(Constants.instance.getForwardingFilter());
         sshClient.setServerKeyVerifier(new OracleInstanceServerKeyVerifier(instance, authInfo));
         if (authInfo instanceof PublicKeyAuthInfo info) {
             sshClient.setKeyIdentityProvider(new FileKeyPairProvider(info.getPrivateKeyPath().toPath()));

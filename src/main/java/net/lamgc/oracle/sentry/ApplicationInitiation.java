@@ -107,6 +107,7 @@ class ApplicationInitiation {
 
     @PostConstruct
     @Order(1)
+    @SuppressWarnings({"MismatchedReadAndWriteOfArray", "RedundantOperationOnEmptyContainer"})
     private void initialEnvironment() throws IOException {
         String[] directors = new String[] {
                 "./config",
@@ -115,7 +116,7 @@ class ApplicationInitiation {
         };
 
         String[] files = new String[] {
-                sshIdentityPath
+
         };
 
         for (String directory : directors) {

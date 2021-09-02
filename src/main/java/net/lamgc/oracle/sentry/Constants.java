@@ -1,5 +1,7 @@
 package net.lamgc.oracle.sentry;
 
+import net.lamgc.oracle.sentry.oci.compute.ssh.ConfiguredForwardingFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -23,6 +25,8 @@ public final class Constants {
     @NonNull
     private String firstConnectionPolicy;
 
+    @Autowired
+    private ConfiguredForwardingFilter forwardingFilter;
 
     /**
      * 获取 SSH 首次连接策略.
@@ -31,5 +35,13 @@ public final class Constants {
     @NonNull
     public String getFirstConnectionPolicy() {
         return firstConnectionPolicy;
+    }
+
+    /**
+     * 获取已配置的转发过滤器.
+     * @return 返回转发过滤器.
+     */
+    public ConfiguredForwardingFilter getForwardingFilter() {
+        return forwardingFilter;
     }
 }
