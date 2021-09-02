@@ -2,11 +2,14 @@ package net.lamgc.oracle.sentry.script.groovy;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import net.lamgc.oracle.sentry.ComputeInstanceManager;
 import net.lamgc.oracle.sentry.script.Script;
 import net.lamgc.oracle.sentry.script.ScriptInfo;
-import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
+import net.lamgc.oracle.sentry.script.groovy.trigger.GroovyTrigger;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Groovy DSL 脚本的父类.
@@ -16,11 +19,14 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 public class GroovyDslDelegate implements Script {
 
     private final GroovyScriptInfo scriptInfo = new GroovyScriptInfo();
+    private final GroovyScriptLoader scriptLoader;
 
     /**
      * 构建一个 DSL Delegate, 并传入可操作对象.
+     * @param scriptLoader 该脚本所属的加载器.
      */
-    public GroovyDslDelegate() {
+    public GroovyDslDelegate(GroovyScriptLoader scriptLoader) {
+        this.scriptLoader = scriptLoader;
     }
 
     /**
@@ -29,7 +35,11 @@ public class GroovyDslDelegate implements Script {
      * @param closure 待执行闭包.
      */
     private void trigger(String triggerName, Closure<?> closure){
-        DefaultGroovyMethods.with(GroovyTriggerProvider.INSTANCE.getTriggerByName(triggerName), closure);
+        if (!scriptLoader.isInitialed(this)) {
+            return;
+        }
+        GroovyTrigger trigger = GroovyTriggerProvider.INSTANCE.getTriggerByName(triggerName);
+        DefaultGroovyMethods.with(trigger, closure);
     }
 
     /**
