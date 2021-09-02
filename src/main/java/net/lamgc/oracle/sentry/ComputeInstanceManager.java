@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * 计算实例管理器.
  * @author LamGC
  */
-public class ComputeInstanceManager {
+public final class ComputeInstanceManager {
 
     private final Map<String, ComputeInstance> instanceMap = new ConcurrentHashMap<>();
     private SshAuthIdentityProvider sshIdentityProvider;

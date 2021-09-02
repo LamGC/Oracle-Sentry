@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @SpringBootApplication
 @Configuration
-public class ApplicationMain {
+class ApplicationMain {
 
     private final static Logger log = LoggerFactory.getLogger(ApplicationMain.class);
 
