@@ -1,6 +1,7 @@
+//file:noinspection GradlePackageUpdate SpringBoot 的版本由插件管理.
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.5.3'
+    id 'org.springframework.boot' version '2.5.4'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'jacoco'
 }
@@ -14,14 +15,14 @@ repositories {
 }
 
 dependencies {
-    def ociSdkVer = '2.3.2'
+    def ociSdkVer = '2.4.0'
     def sshdVer = '2.7.0'
     def bouncyCastleVer = '1.69'
 
     implementation 'org.springframework.boot:spring-boot-starter'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    implementation 'org.slf4j:slf4j-api:1.7.31'
+    implementation 'org.slf4j:slf4j-api:1.7.32'
 
     implementation "com.oracle.oci.sdk:oci-java-sdk-core:${ociSdkVer}"
     implementation "com.oracle.oci.sdk:oci-java-sdk-identity:${ociSdkVer}"
@@ -36,12 +37,12 @@ dependencies {
 
     implementation "net.i2p.crypto:eddsa:0.3.0"
 
-    implementation 'org.codehaus.groovy:groovy-all:3.0.7'
+    implementation 'org.codehaus.groovy:groovy-all:3.0.8'
 
-    implementation 'com.google.code.gson:gson:2.8.7'
+    implementation 'com.google.code.gson:gson:2.8.8'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
 }
 
 test {
