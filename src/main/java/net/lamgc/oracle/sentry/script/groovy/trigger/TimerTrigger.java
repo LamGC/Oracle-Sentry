@@ -23,7 +23,7 @@ public class TimerTrigger implements GroovyTrigger {
         SCHEDULER.setThreadFactory(new ThreadFactoryBuilder()
                 .setNameFormat("Groovy-TimerTrigger-%d")
                 .build());
-        SCHEDULER.setErrorHandler(t -> getLog().error("脚本执行时发生异常.", t));
+        SCHEDULER.setErrorHandler(t -> triggerLog().error("脚本执行时发生异常.", t));
         SCHEDULER.initialize();
     }
 
@@ -44,24 +44,24 @@ public class TimerTrigger implements GroovyTrigger {
     @Override
     public synchronized void run(Closure<?> runnable) {
         if (future != null) {
-            getLog().warn("脚本存在多个 run 代码块, 已忽略.");
+            triggerLog().warn("脚本存在多个 run 代码块, 已忽略.");
             return;
         }
 
         if (trigger == null) {
-            if (!getLog().isDebugEnabled()) {
-                getLog().warn("脚本尚未设置 Cron 时间表达式, 任务将不会执行(堆栈信息请检查调试级别日志).");
+            if (!triggerLog().isDebugEnabled()) {
+                triggerLog().warn("脚本尚未设置 Cron 时间表达式, 任务将不会执行(堆栈信息请检查调试级别日志).");
             } else {
-                getLog().warn("{} - 脚本尚未设置 Cron 时间表达式, 任务将不会执行(堆栈信息请检查调试级别日志).", this);
-                getLog().warn("{} - 脚本尚未设置 Cron 时间表达式, 任务将不会执行.\n{}", this, Throwables.getStackTraceAsString(new Exception()));
+                triggerLog().warn("{} - 脚本尚未设置 Cron 时间表达式, 任务将不会执行(堆栈信息请检查调试级别日志).", this);
+                triggerLog().warn("{} - 脚本尚未设置 Cron 时间表达式, 任务将不会执行.\n{}", this, Throwables.getStackTraceAsString(new Exception()));
             }
             return;
         } else if (runnable == null) {
-            if (!getLog().isDebugEnabled()) {
-                getLog().warn("脚本尚未设置 Cron 时间表达式, 任务将不会执行(堆栈信息请检查调试级别日志).");
+            if (!triggerLog().isDebugEnabled()) {
+                triggerLog().warn("脚本尚未设置 Cron 时间表达式, 任务将不会执行(堆栈信息请检查调试级别日志).");
             } else {
-                getLog().warn("{} - 脚本尚未设置任务动作, 任务将不会执行(堆栈信息请检查调试级别日志).", this);
-                getLog().warn("{} - 脚本尚未设置任务动作, 任务将不会执行.\n{}", this, Throwables.getStackTraceAsString(new Exception()));
+                triggerLog().warn("{} - 脚本尚未设置任务动作, 任务将不会执行(堆栈信息请检查调试级别日志).", this);
+                triggerLog().warn("{} - 脚本尚未设置任务动作, 任务将不会执行.\n{}", this, Throwables.getStackTraceAsString(new Exception()));
             }
             return;
         }
@@ -76,7 +76,7 @@ public class TimerTrigger implements GroovyTrigger {
         }
     }
     
-    private static Logger getLog() {
+    private static Logger triggerLog() {
         return LoggerFactory.getLogger(TimerTrigger.class);
     }
 
