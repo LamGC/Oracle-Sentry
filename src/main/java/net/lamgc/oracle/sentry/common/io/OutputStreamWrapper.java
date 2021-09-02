@@ -1,4 +1,4 @@
-package net.lamgc.oracle.sentry.common;
+package net.lamgc.oracle.sentry.common.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
