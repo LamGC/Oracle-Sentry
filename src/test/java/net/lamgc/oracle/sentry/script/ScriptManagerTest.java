@@ -13,7 +13,7 @@ class ScriptManagerTest {
     public void loadScriptTest() {
         ScriptManager manager = new ScriptManager(new File("./run/scripts"),
                 new ScriptComponents(new ScriptHttpClient(HttpClientBuilder.create().build()),
-                        new ComputeInstanceManager()));
+                        new ComputeInstanceManager(), new ScriptLoggerFactory()));
 
         manager.loadScripts();
 
