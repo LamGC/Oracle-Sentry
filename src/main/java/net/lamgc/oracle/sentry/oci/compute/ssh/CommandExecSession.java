@@ -1,7 +1,7 @@
 package net.lamgc.oracle.sentry.oci.compute.ssh;
 
-import net.lamgc.oracle.sentry.common.InputStreamWrapper;
-import net.lamgc.oracle.sentry.common.OutputStreamWrapper;
+import net.lamgc.oracle.sentry.common.io.InputStreamWrapper;
+import net.lamgc.oracle.sentry.common.io.OutputStreamWrapper;
 import org.apache.sshd.client.channel.ChannelExec;
 import org.apache.sshd.client.channel.ClientChannelEvent;
 

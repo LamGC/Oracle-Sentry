@@ -3,6 +3,7 @@ package net.lamgc.oracle.sentry;
 import com.google.common.base.Throwables;
 import com.oracle.bmc.auth.AuthenticationDetailsProvider;
 import net.lamgc.oracle.sentry.script.ScriptComponents;
+import net.lamgc.oracle.sentry.script.ScriptLoggerFactory;
 import net.lamgc.oracle.sentry.script.ScriptManager;
 import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -95,7 +96,9 @@ class ApplicationInitiation {
     public ScriptManager initialScriptManager(ComputeInstanceManager instanceManager) {
         ScriptComponents context = new ScriptComponents(new ScriptHttpClient(HttpClientBuilder.create()
                 .build()),
-                instanceManager);
+                instanceManager,
+                new ScriptLoggerFactory()
+        );
 
         ScriptManager manager = new ScriptManager(new File(scriptsLocation), context);
         manager.loadScripts();
