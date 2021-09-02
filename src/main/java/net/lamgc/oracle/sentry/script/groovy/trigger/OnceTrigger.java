@@ -27,4 +27,9 @@ public class OnceTrigger implements GroovyTrigger {
     public void run(Closure<?> task) {
         EXECUTOR.execute(task);
     }
+
+    @Override
+    public void shutdown() {
+        // Nothing.
+    }
 }

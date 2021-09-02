@@ -17,4 +17,9 @@ public interface GroovyTrigger {
      */
     void run(Closure<?> task);
 
+    /**
+     * 关闭触发器.
+     */
+    void shutdown();
+
 }

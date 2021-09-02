@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
+import java.util.concurrent.ScheduledFuture;
+
 /**
  * @author LamGC
  */
@@ -27,6 +29,9 @@ public class TimerTrigger implements GroovyTrigger {
         SCHEDULER.setErrorHandler(t -> log.error("脚本执行时发生异常.", t));
         SCHEDULER.initialize();
     }
+
+    private CronTrigger trigger;
+    private ScheduledFuture<?> future;
 
     /**
      * 设定定时时间.
@@ -59,7 +64,14 @@ public class TimerTrigger implements GroovyTrigger {
             return;
         }
 
-        SCHEDULER.schedule(new TimerTaskRunnable(runnable), trigger);
+        this.future = SCHEDULER.schedule(new TimerTaskRunnable(runnable), trigger);
+    }
+
+    @Override
+    public void shutdown() {
+        if (this.future != null) {
+            future.cancel(false);
+        }
     }
 
     private static class TimerTaskRunnable implements Runnable {
