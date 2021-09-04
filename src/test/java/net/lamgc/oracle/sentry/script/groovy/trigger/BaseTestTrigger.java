@@ -7,4 +7,9 @@ public abstract class BaseTestTrigger implements GroovyTrigger {
     public void run(Closure<?> task) {
         throw new UnsupportedOperationException("Unavailable trigger.");
     }
+
+    @Override
+    public void shutdown() {
+        // Do nothing.
+    }
 }
