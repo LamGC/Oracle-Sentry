@@ -26,6 +26,7 @@ dependencies {
 
     implementation "com.oracle.oci.sdk:oci-java-sdk-core:${ociSdkVer}"
     implementation "com.oracle.oci.sdk:oci-java-sdk-identity:${ociSdkVer}"
+    implementation "com.oracle.oci.sdk:oci-java-sdk-objectstorage:${ociSdkVer}"
 
     implementation "org.apache.sshd:sshd-core:${sshdVer}"
     implementation "org.apache.sshd:sshd-sftp:${sshdVer}"
