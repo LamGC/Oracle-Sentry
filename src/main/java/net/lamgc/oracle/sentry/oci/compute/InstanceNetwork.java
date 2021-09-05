@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
+ * 实例网络操作类.
  * @author LamGC
  */
 public class InstanceNetwork {

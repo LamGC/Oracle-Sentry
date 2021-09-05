@@ -11,6 +11,8 @@ import org.springframework.scheduling.support.CronTrigger;
 import java.util.concurrent.ScheduledFuture;
 
 /**
+ * 时间触发器.
+ * <p> 通过设置 Cron 时间表达式, 可以达到定时触发的效果.
  * @author LamGC
  */
 @SuppressWarnings("unused")
