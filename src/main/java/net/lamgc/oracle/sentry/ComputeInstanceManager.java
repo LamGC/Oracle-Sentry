@@ -1,20 +1,21 @@
 package net.lamgc.oracle.sentry;
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider;
-import com.oracle.bmc.core.ComputeClient;
 import com.oracle.bmc.core.model.Instance;
 import com.oracle.bmc.core.requests.ListInstancesRequest;
 import com.oracle.bmc.core.responses.ListInstancesResponse;
-import com.oracle.bmc.identity.IdentityClient;
 import com.oracle.bmc.identity.model.Compartment;
 import com.oracle.bmc.identity.requests.ListCompartmentsRequest;
 import com.oracle.bmc.identity.responses.ListCompartmentsResponse;
+import net.lamgc.oracle.sentry.oci.account.OracleAccount;
 import net.lamgc.oracle.sentry.oci.compute.ComputeInstance;
 import net.lamgc.oracle.sentry.oci.compute.ssh.SshAuthIdentityProvider;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -64,37 +65,37 @@ public final class ComputeInstanceManager {
     public Set<ComputeInstance> getInstancesByUserId(String userId) {
         Objects.requireNonNull(userId);
         return instanceMap.values().stream()
-                .filter(computeInstance -> computeInstance.getUserId().equals(userId))
+                .filter(computeInstance -> computeInstance.getFromAccount().id().equals(userId))
                 .collect(Collectors.toSet());
     }
 
     /**
      * 添加某一用户的所有计算实例.
-     * @param provider 用户身份提供器.
+     * @param account Oracle 云账号对象.
      * @return 返回已成功添加的实例数量.
      * @throws NullPointerException 如果 provider 为 {@code null} 则抛出异常.
      */
-    public int addComputeInstanceFromUser(AuthenticationDetailsProvider provider) {
-        Objects.requireNonNull(provider);
-        IdentityClient identityClient = new IdentityClient(provider);
-        ComputeClient computeClient = new ComputeClient(provider);
-        ListCompartmentsResponse listCompartments = identityClient.listCompartments(ListCompartmentsRequest.builder()
-                .compartmentId(provider.getTenantId())
-                .build());
+    public int addComputeInstanceFromUser(OracleAccount account) {
+        Objects.requireNonNull(account);
+        ListCompartmentsResponse listCompartments = account.clients().identity()
+                .listCompartments(ListCompartmentsRequest.builder()
+                    .compartmentId(account.tenantId())
+                    .build());
         int addCount = 0;
         Set<String> compartmentIds = listCompartments.getItems().stream()
                 .map(Compartment::getId).collect(Collectors.toSet());
-        compartmentIds.add(provider.getTenantId());
+        compartmentIds.add(account.tenantId());
         for (String compartmentId : compartmentIds) {
-            ListInstancesResponse listInstances = computeClient.listInstances(ListInstancesRequest.builder()
-                    .compartmentId(compartmentId)
-                    .build());
+            ListInstancesResponse listInstances = account.clients().compute()
+                    .listInstances(ListInstancesRequest.builder()
+                        .compartmentId(compartmentId)
+                        .build());
             for (Instance instance : listInstances.getItems()) {
                 if (instance.getLifecycleState() == Instance.LifecycleState.Terminated) {
                     continue;
                 }
                 ComputeInstance computeInstance = new ComputeInstance(this, instance.getId(),
-                        provider.getUserId(), compartmentId, instance.getImageId(), provider);
+                        compartmentId, instance.getImageId(), account);
 
                 addComputeInstance(computeInstance);
                 addCount ++;

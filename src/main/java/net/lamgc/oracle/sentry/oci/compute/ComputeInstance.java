@@ -1,6 +1,5 @@
 package net.lamgc.oracle.sentry.oci.compute;
 
-import com.oracle.bmc.auth.AuthenticationDetailsProvider;
 import com.oracle.bmc.core.ComputeClient;
 import com.oracle.bmc.core.model.Instance;
 import com.oracle.bmc.core.requests.GetImageRequest;
@@ -10,6 +9,7 @@ import com.oracle.bmc.core.responses.GetImageResponse;
 import com.oracle.bmc.core.responses.GetInstanceResponse;
 import com.oracle.bmc.core.responses.InstanceActionResponse;
 import net.lamgc.oracle.sentry.ComputeInstanceManager;
+import net.lamgc.oracle.sentry.oci.account.OracleAccount;
 import net.lamgc.oracle.sentry.oci.compute.ssh.InstanceSsh;
 import net.lamgc.oracle.sentry.oci.compute.ssh.SshAuthInfo;
 
@@ -24,11 +24,10 @@ public final class ComputeInstance {
     private final ComputeInstanceManager instanceManager;
 
     private final String instanceId;
-    private final String userId;
     private final String compartmentId;
     private final String imageId;
-    private final AuthenticationDetailsProvider authProvider;
     private final InstanceNetwork network;
+    private final OracleAccount fromAccount;
 
     private final ComputeClient computeClient;
 
@@ -36,22 +35,20 @@ public final class ComputeInstance {
      * 构造一个计算实例对象.
      * @param instanceManager 实例所属的管理器.
      * @param instanceId 实例 Id.
-     * @param userId 所属用户 Id.
      * @param compartmentId 实例所在区域的 Id.
      * @param imageId 镜像 Id.
-     * @param provider 所属用户的身份配置提供器.
+     * @param fromAccount 所属用户的身份配置提供器.
      */
-    public ComputeInstance(ComputeInstanceManager instanceManager, String instanceId, String userId,
-                           String compartmentId, String imageId, AuthenticationDetailsProvider provider) {
+    public ComputeInstance(ComputeInstanceManager instanceManager, String instanceId,
+                           String compartmentId, String imageId, OracleAccount fromAccount) {
         this.instanceManager = instanceManager;
         this.instanceId = instanceId;
-        this.userId = userId;
         this.compartmentId = compartmentId;
         this.imageId = imageId;
-        this.authProvider = provider;
+        this.fromAccount = fromAccount;
 
-        computeClient = new ComputeClient(provider);
         this.network = new InstanceNetwork(this);
+        this.computeClient = fromAccount.clients().compute();
     }
 
     /**
@@ -61,14 +58,6 @@ public final class ComputeInstance {
      */
     public String getInstanceId() {
         return instanceId;
-    }
-
-    /**
-     * 获取所属用户的 Id.
-     * @return 返回用户 Id.
-     */
-    public String getUserId() {
-        return userId;
     }
 
     /**
@@ -88,8 +77,8 @@ public final class ComputeInstance {
      */
     public BootImage getImage() {
         GetImageResponse image = computeClient.getImage(GetImageRequest.builder()
-                .imageId(imageId)
-                .build());
+                    .imageId(imageId)
+                    .build());
         return new BootImage(image.getImage());
     }
 
@@ -170,10 +159,6 @@ public final class ComputeInstance {
         return computeClient;
     }
 
-    AuthenticationDetailsProvider getAuthProvider() {
-        return authProvider;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -183,12 +168,12 @@ public final class ComputeInstance {
             return false;
         }
         ComputeInstance that = (ComputeInstance) o;
-        return instanceId.equals(that.instanceId) && userId.equals(that.userId) && compartmentId.equals(that.compartmentId);
+        return instanceId.equals(that.instanceId) && fromAccount.equals(that.fromAccount) && compartmentId.equals(that.compartmentId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(instanceId, userId, compartmentId);
+        return Objects.hash(instanceId, fromAccount, compartmentId);
     }
 
     /**
@@ -201,4 +186,11 @@ public final class ComputeInstance {
                 .getAuthInfoByInstanceId(instanceId);
     }
 
+    /**
+     * 获取实例所属的 Oracle 云帐号对象.
+     * @return 返回实例所属帐号对象.
+     */
+    public OracleAccount getFromAccount() {
+        return fromAccount;
+    }
 }

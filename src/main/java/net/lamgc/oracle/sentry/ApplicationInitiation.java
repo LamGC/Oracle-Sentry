@@ -1,7 +1,8 @@
 package net.lamgc.oracle.sentry;
 
 import com.google.common.base.Throwables;
-import com.oracle.bmc.auth.AuthenticationDetailsProvider;
+import net.lamgc.oracle.sentry.oci.account.OracleAccount;
+import net.lamgc.oracle.sentry.oci.account.OracleAccountManager;
 import net.lamgc.oracle.sentry.script.ScriptComponents;
 import net.lamgc.oracle.sentry.script.ScriptLoggerFactory;
 import net.lamgc.oracle.sentry.script.ScriptManager;
@@ -48,8 +49,8 @@ class ApplicationInitiation {
     private String sshIdentityPath;
 
     @Bean("oracle.identity.manager")
-    public OracleIdentityManager initialOracleIdentityManager() throws IOException {
-        OracleIdentityManager oracleUserManager = new OracleIdentityManager();
+    public OracleAccountManager initialOracleAccountManager() throws IOException {
+        OracleAccountManager oracleUserManager = new OracleAccountManager();
         log.info("正在加载 Oracle API 身份配置...");
         log.debug("Oracle API 身份配置查找路径: \"{}\", 匹配表达式: {}", identityDirectory, identityFilePattern);
         File identityDir = new File(identityDirectory);
@@ -68,15 +69,15 @@ class ApplicationInitiation {
 
     @Bean("oracle.compute.instance.manager")
     @Autowired
-    public ComputeInstanceManager initialComputeInstanceManager(OracleIdentityManager identityManager) throws IOException {
+    public ComputeInstanceManager initialComputeInstanceManager(OracleAccountManager accountManager) throws IOException {
         ComputeInstanceManager instanceManager = new ComputeInstanceManager();
         int addTotal = 0;
-        for (AuthenticationDetailsProvider provider : identityManager.getProviders()) {
-            String identityName = identityManager.getIdentityName(provider.getUserId());
+        for (OracleAccount account : accountManager.getAccounts()) {
+            String identityName = account.name();
             log.info("正在加载用户 {} 所拥有的所有实例...", identityName);
             int addCount;
             try {
-                addCount = instanceManager.addComputeInstanceFromUser(provider);
+                addCount = instanceManager.addComputeInstanceFromUser(account);
             } catch (Exception e) {
                 log.error("加载实例时发生异常.", e);
                 continue;
@@ -93,11 +94,12 @@ class ApplicationInitiation {
 
     @Bean("sentry.script.manager")
     @Autowired
-    public ScriptManager initialScriptManager(ComputeInstanceManager instanceManager) {
+    public ScriptManager initialScriptManager(ComputeInstanceManager instanceManager, OracleAccountManager accountManager) {
         ScriptComponents context = new ScriptComponents(new ScriptHttpClient(HttpClientBuilder.create()
                 .build()),
                 instanceManager,
-                new ScriptLoggerFactory()
+                new ScriptLoggerFactory(),
+                accountManager
         );
 
         ScriptManager manager = new ScriptManager(new File(scriptsLocation), context);

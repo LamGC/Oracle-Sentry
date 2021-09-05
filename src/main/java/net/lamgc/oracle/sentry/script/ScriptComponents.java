@@ -1,6 +1,7 @@
 package net.lamgc.oracle.sentry.script;
 
 import net.lamgc.oracle.sentry.ComputeInstanceManager;
+import net.lamgc.oracle.sentry.oci.account.OracleAccountManager;
 import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
 
 /**
@@ -12,7 +13,8 @@ import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
 public final record ScriptComponents(
         ScriptHttpClient HTTP,
         ComputeInstanceManager InstanceManager,
-        ScriptLoggerFactory loggerFactory
+        ScriptLoggerFactory loggerFactory,
+        OracleAccountManager AccountManager
 ) {
 
 }

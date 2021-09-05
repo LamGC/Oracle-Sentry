@@ -22,7 +22,7 @@ public class InstanceNetwork {
 
     InstanceNetwork(ComputeInstance instance) {
         this.instance = instance;
-        this.vcnClient = new VirtualNetworkClient(this.instance.getAuthProvider());
+        this.vcnClient = instance.getFromAccount().clients().network();
     }
 
     /**
