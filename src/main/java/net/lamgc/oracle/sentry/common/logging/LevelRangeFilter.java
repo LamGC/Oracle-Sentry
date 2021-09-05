@@ -9,6 +9,7 @@ import ch.qos.logback.core.spi.FilterReply;
  * 级别范围过滤器.
  * @author LamGC
  */
+@SuppressWarnings("unused")
 public class LevelRangeFilter extends Filter<ILoggingEvent> {
 
     private Level maxLevel;

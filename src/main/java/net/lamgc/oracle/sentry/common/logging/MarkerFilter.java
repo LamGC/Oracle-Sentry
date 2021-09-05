@@ -7,6 +7,7 @@ import ch.qos.logback.core.spi.FilterReply;
 /**
  * @author LamGC
  */
+@SuppressWarnings("unused")
 public class MarkerFilter extends Filter<ILoggingEvent> {
 
     private String markerName;

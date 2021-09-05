@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ScriptLoggerFactory implements ScriptComponentFactory<Logger> {
 
-    public final static Marker SCRIPT_MARKER = MarkerFactory.getMarker("Script");
+    private final static Marker SCRIPT_MARKER = MarkerFactory.getMarker("Script");
 
     @Override
     public Logger getInstance(ScriptInfo info) {
