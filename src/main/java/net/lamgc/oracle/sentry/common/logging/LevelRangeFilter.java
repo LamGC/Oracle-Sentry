@@ -24,10 +24,19 @@ public class LevelRangeFilter extends Filter<ILoggingEvent> {
         return FilterReply.NEUTRAL;
     }
 
+    /**
+     * 设置最高等级.
+     * <p> 仅限 XML 配置文件设置.
+     * @param maxLevel 最高等级(包括).
+     */
     public void setMaxLevel(String maxLevel) {
         this.maxLevel = Level.toLevel(maxLevel);
     }
 
+    /**
+     * 设置最低等级.
+     * @param minLevel 允许的最低等级(包括).
+     */
     public void setMinLevel(String minLevel) {
         this.minLevel = Level.toLevel(minLevel);
     }

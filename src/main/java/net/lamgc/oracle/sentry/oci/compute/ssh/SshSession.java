@@ -49,8 +49,11 @@ public class SshSession implements Closeable {
 
     /**
      * 创建本地 TCP 转发隧道.
-     * <p> 该隧道为方向为 "本地->远端" (本地发起连接转发至远端端口).
+     * <p> 该隧道为方向为 "本地-&gt;远端" (本地发起连接转发至远端端口).
+     * @param localPort 本地监听端口.
+     * @param remotePort 远端目标端口.
      * @return 返回 TCP 转发通道对象, 可获取通道信息和关闭通道.
+     * @throws IOException 当操作失败时抛出该异常.
      */
     public TcpForwardingChannel createLocalTcpForwarding(int localPort, int remotePort) throws IOException {
         ExplicitPortForwardingTracker tracker = clientSession
@@ -60,10 +63,11 @@ public class SshSession implements Closeable {
 
     /**
      * 创建远端 TCP 转发隧道.
-     * <p> 该隧道为方向为 "本地<-远端" (远端服务器发起连接转发至本地端口).
+     * <p> 该隧道为方向为 "本地&lt;-远端" (远端服务器发起连接转发至本地端口).
      * @param remotePort 远端监听端口号, 该端口为远端服务连接转发的端口号.
      * @param localPort 本地连接端口号, 该端口为本地服务端的端口号.
      * @return 返回 Tcp 转发通道对象, 用于管理转发通道.
+     * @throws IOException 当操作失败时抛出异常.
      */
     public TcpForwardingChannel createRemoteTcpForwarding(int remotePort, int localPort) throws IOException {
         ExplicitPortForwardingTracker tracker =
