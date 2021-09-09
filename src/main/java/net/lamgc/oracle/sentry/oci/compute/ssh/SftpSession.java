@@ -1,10 +1,12 @@
 package net.lamgc.oracle.sentry.oci.compute.ssh;
 
+import net.lamgc.oracle.sentry.common.LazyLoader;
 import org.apache.sshd.sftp.client.SftpClient;
 import org.apache.sshd.sftp.common.SftpConstants;
 import org.apache.sshd.sftp.common.SftpException;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.NoSuchFileException;
 import java.util.HashSet;
@@ -30,6 +32,7 @@ public class SftpSession implements Closeable {
     }
 
     private final SftpClient sftpClient;
+    private final LazyLoader<String> userHome;
 
     /**
      * 创建 Sftp 会话.
@@ -37,6 +40,20 @@ public class SftpSession implements Closeable {
      */
     SftpSession(SftpClient sftpClient) {
         this.sftpClient = sftpClient;
+        this.userHome = new LazyLoader<>(() -> {
+            try {
+                CommandExecSession echoHOME = new CommandExecSession(sftpClient.getSession().createExecChannel("echo $HOME"));
+                ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
+                echoHOME.setOut(outBuffer);
+                echoHOME.exec();
+                if (echoHOME.exitCode() != null && echoHOME.exitCode() == 0) {
+                    return outBuffer.toString(StandardCharsets.UTF_8).trim();
+                }
+                throw new IOException("Command execution failed.(ExitCode: " + echoHOME.exitCode() + ")");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**
@@ -245,6 +262,19 @@ public class SftpSession implements Closeable {
     @Override
     public void close() throws IOException {
         sftpClient.close();
+    }
+
+    /**
+     * 获取用户主目录.
+     * @return 返回用户主目录, 例如: "/root", 末尾无符号.
+     * @throws IOException 如果操作失败, 则抛出异常.
+     */
+    public String getUserHome() throws IOException {
+        try {
+            return userHome.getInstance();
+        } catch (RuntimeException e) {
+            throw (IOException) e.getCause();
+        }
     }
 
 }
