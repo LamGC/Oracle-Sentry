@@ -44,10 +44,12 @@ public class InstanceSsh implements AutoCloseable {
         sshClient.setForwardingFilter(Constants.instance.getForwardingFilter());
         sshClient.setServerKeyVerifier(new OracleInstanceServerKeyVerifier(instance, authInfo));
         if (authInfo instanceof PublicKeyAuthInfo info) {
-            sshClient.setKeyIdentityProvider(new FileKeyPairProvider(info.getPrivateKeyPath().toPath()));
+            FileKeyPairProvider fileKeyPairProvider = new FileKeyPairProvider(info.getPrivateKeyPath().toPath());
             if (!Strings.isNullOrEmpty(info.getKeyPassword())) {
-                sshClient.setFilePasswordProvider(FilePasswordProvider.of(info.getKeyPassword()));
+                fileKeyPairProvider.setPasswordFinder(FilePasswordProvider.of(info.getKeyPassword()));
+                log.info("已设置密钥解密密码.");
             }
+            sshClient.setKeyIdentityProvider(fileKeyPairProvider);
         } else if (authInfo instanceof PasswordAuthInfo info) {
             sshClient.addPasswordIdentity(info.getPassword());
         } else {
