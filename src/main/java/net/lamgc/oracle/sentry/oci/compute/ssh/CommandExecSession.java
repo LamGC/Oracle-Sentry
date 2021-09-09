@@ -54,9 +54,11 @@ public final class CommandExecSession implements Closeable {
     /**
      * 等待程序执行完毕.
      * @param timeout 超时时间, 0 为无限等待(单位: 毫秒).
+     * @return 如果在超时时间内返回, 返回 {@code true}, 超时返回 {@code false}.
      */
-    public void waitFor(long timeout) {
-        channelExec.waitFor(EnumSet.of(ClientChannelEvent.EXIT_STATUS, ClientChannelEvent.EXIT_SIGNAL), timeout);
+    public boolean waitFor(long timeout) {
+        return !channelExec.waitFor(EnumSet.of(ClientChannelEvent.EXIT_STATUS, ClientChannelEvent.EXIT_SIGNAL), timeout)
+                .contains(ClientChannelEvent.TIMEOUT);
     }
 
     /**
