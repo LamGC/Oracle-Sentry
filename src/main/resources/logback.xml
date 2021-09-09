@@ -87,6 +87,7 @@
     <logger name="com.oracle.bmc" level="WARN"/>
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.apache.http" level="INFO"/>
+    <logger name="org.apache.sshd" level="INFO"/>
     <logger name="com.oracle.bmc.http.ApacheConfigurator" level="ERROR"/>
     <root>
         <appender-ref ref="stdout" />
