@@ -1,9 +1,13 @@
 package net.lamgc.oracle.sentry.oci.account;
 
 import com.oracle.bmc.auth.AuthenticationDetailsProvider;
+import com.oracle.bmc.identity.model.RegionSubscription;
 import com.oracle.bmc.identity.model.User;
 import com.oracle.bmc.identity.requests.GetUserRequest;
+import com.oracle.bmc.identity.requests.ListRegionSubscriptionsRequest;
 
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -55,6 +59,30 @@ public final class OracleAccount {
      */
     public String description() {
         return this.user.getDescription();
+    }
+
+    /**
+     * 获取用户订阅的所有地区.
+     * @return 返回已订阅地区列表.
+     */
+    public List<RegionSubscription> regions() {
+        return this.clients.identity().listRegionSubscriptions(ListRegionSubscriptionsRequest.builder()
+                        .tenancyId(this.id())
+                .build()).getItems();
+    }
+
+    /**
+     * 获取帐号主区域.
+     * @return 返回帐号主区域.
+     * @throws NoSuchElementException 当主区域搜索失败时抛出.
+     */
+    public RegionSubscription mainRegion() {
+        for (RegionSubscription subscription : regions()) {
+            if (subscription.getIsHomeRegion()) {
+                return subscription;
+            }
+        }
+        throw new NoSuchElementException("Primary region not found.");
     }
 
     /**
