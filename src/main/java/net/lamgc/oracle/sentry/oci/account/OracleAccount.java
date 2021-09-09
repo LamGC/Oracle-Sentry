@@ -67,7 +67,7 @@ public final class OracleAccount {
      */
     public List<RegionSubscription> regions() {
         return this.clients.identity().listRegionSubscriptions(ListRegionSubscriptionsRequest.builder()
-                        .tenancyId(this.id())
+                        .tenancyId(this.tenantId())
                 .build()).getItems();
     }
 
