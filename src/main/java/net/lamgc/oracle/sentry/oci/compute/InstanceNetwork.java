@@ -1,6 +1,7 @@
 package net.lamgc.oracle.sentry.oci.compute;
 
 import com.oracle.bmc.core.VirtualNetworkClient;
+import com.oracle.bmc.core.model.Vnic;
 import com.oracle.bmc.core.model.VnicAttachment;
 import com.oracle.bmc.core.requests.GetVnicRequest;
 import com.oracle.bmc.core.requests.ListVnicAttachmentsRequest;
@@ -56,8 +57,24 @@ public class InstanceNetwork {
                         .build()
                 );
 
-        return listVnicAttachments.getItems().stream().toList();
+        return listVnicAttachments.getItems();
     }
 
+    /**
+     * 获取实例的主要 VNIC(虚拟网络接口)
+     * @return 返回实例的主要 VNIC 对象.
+     * @throws NoSuchElementException 当找不到主要 VNIC 时抛出该异常.
+     */
+    public Vnic getPrimaryVnic() {
+        for (VnicAttachment vnicAttachment : listVnicAttachments()) {
+            GetVnicResponse vnic = vcnClient.getVnic(GetVnicRequest.builder()
+                    .vnicId(vnicAttachment.getVnicId())
+                    .build());
+            if (vnic.getVnic().getIsPrimary()) {
+                return vnic.getVnic();
+            }
+        }
+        throw new NoSuchElementException("Primary vnic not found.");
+    }
 
 }
