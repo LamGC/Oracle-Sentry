@@ -79,7 +79,7 @@
             <pattern>[%d{HH:mm:ss.SSS} %5level][Script][%logger]: %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>./logs/run-script-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>./logs/run-script-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
     </appender>
