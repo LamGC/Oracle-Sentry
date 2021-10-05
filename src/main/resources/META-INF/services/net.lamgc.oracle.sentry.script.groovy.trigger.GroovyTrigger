@@ -1,2 +1,3 @@
 net.lamgc.oracle.sentry.script.groovy.trigger.OnceTrigger
 net.lamgc.oracle.sentry.script.groovy.trigger.TimerTrigger
+net.lamgc.oracle.sentry.script.groovy.trigger.InstanceStateWatchTrigger
