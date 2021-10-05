@@ -9,6 +9,8 @@ import com.oracle.bmc.identity.responses.ListCompartmentsResponse;
 import net.lamgc.oracle.sentry.oci.account.OracleAccount;
 import net.lamgc.oracle.sentry.oci.compute.ComputeInstance;
 import net.lamgc.oracle.sentry.oci.compute.ssh.SshAuthIdentityProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
  */
 public final class ComputeInstanceManager {
 
+    private final static Logger log = LoggerFactory.getLogger(ComputeInstanceManager.class);
+
     private final Map<String, ComputeInstance> instanceMap = new ConcurrentHashMap<>();
     private SshAuthIdentityProvider sshIdentityProvider;
 
@@ -34,8 +38,10 @@ public final class ComputeInstanceManager {
      * @throws IOException 加载时如有异常将直接抛出.
      */
     public void initialSshIdentityProvider(File sshIdentityJson) throws IOException {
+        log.debug("正在初始化 SSH 认证配置提供器...");
         sshIdentityProvider = new SshAuthIdentityProvider(this, sshIdentityJson);
         sshIdentityProvider.loadAuthInfo();
+        log.debug("SSH 认证配置提供器已初始化完成.");
     }
 
     /**
@@ -91,13 +97,15 @@ public final class ComputeInstanceManager {
                         .compartmentId(compartmentId)
                         .build());
             for (Instance instance : listInstances.getItems()) {
-                if (instance.getLifecycleState() == Instance.LifecycleState.Terminated) {
+                if (instance.getLifecycleState() == Instance.LifecycleState.Terminated ||
+                        instance.getLifecycleState() == Instance.LifecycleState.Terminating) {
+                    log.debug("实例 {} 状态为 {}, 不添加该实例.", instance.getId(), instance.getLifecycleState());
                     continue;
                 }
                 ComputeInstance computeInstance = new ComputeInstance(this, instance.getId(),
                         compartmentId, instance.getImageId(), account);
-
                 addComputeInstance(computeInstance);
+                log.debug("已为用户 {} 添加计算实例: {}", account.id(), instance.getId());
                 addCount ++;
             }
         }
