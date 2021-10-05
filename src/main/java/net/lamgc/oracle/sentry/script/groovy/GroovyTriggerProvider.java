@@ -56,7 +56,7 @@ public class GroovyTriggerProvider {
         if (!triggerProviderMap.containsKey(triggerName.toLowerCase())) {
             throw new NoSuchElementException("The specified trigger could not be found: " + triggerName);
         }
-        return triggerProviderMap.get(triggerName).get();
+        return triggerProviderMap.get(triggerName.toLowerCase()).get();
     }
 
 }
