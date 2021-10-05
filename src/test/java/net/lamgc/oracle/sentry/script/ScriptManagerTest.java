@@ -1,6 +1,6 @@
 package net.lamgc.oracle.sentry.script;
 
-import net.lamgc.oracle.sentry.ComputeInstanceManager;
+import net.lamgc.oracle.sentry.oci.compute.ComputeInstanceManager;
 import net.lamgc.oracle.sentry.oci.account.OracleAccountManager;
 import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;

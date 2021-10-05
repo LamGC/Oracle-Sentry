@@ -5,7 +5,7 @@ import com.oracle.bmc.core.ComputeClient;
 import com.oracle.bmc.core.model.Instance;
 import com.oracle.bmc.core.requests.GetInstanceRequest;
 import groovy.lang.Closure;
-import net.lamgc.oracle.sentry.ComputeInstanceManager;
+import net.lamgc.oracle.sentry.oci.compute.ComputeInstanceManager;
 import net.lamgc.oracle.sentry.oci.compute.ComputeInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

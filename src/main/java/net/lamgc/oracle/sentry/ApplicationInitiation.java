@@ -3,6 +3,7 @@ package net.lamgc.oracle.sentry;
 import com.google.common.base.Throwables;
 import net.lamgc.oracle.sentry.oci.account.OracleAccount;
 import net.lamgc.oracle.sentry.oci.account.OracleAccountManager;
+import net.lamgc.oracle.sentry.oci.compute.ComputeInstanceManager;
 import net.lamgc.oracle.sentry.script.ScriptComponents;
 import net.lamgc.oracle.sentry.script.ScriptLoggerFactory;
 import net.lamgc.oracle.sentry.script.ScriptManager;

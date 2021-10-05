@@ -4,7 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.lamgc.oracle.sentry.ComputeInstanceManager;
+import net.lamgc.oracle.sentry.oci.compute.ComputeInstanceManager;
 import net.lamgc.oracle.sentry.oci.compute.ComputeInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

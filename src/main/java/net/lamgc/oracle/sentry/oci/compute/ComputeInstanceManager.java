@@ -1,4 +1,4 @@
-package net.lamgc.oracle.sentry;
+package net.lamgc.oracle.sentry.oci.compute;
 
 import com.oracle.bmc.core.model.Instance;
 import com.oracle.bmc.core.requests.ListInstancesRequest;
@@ -7,7 +7,6 @@ import com.oracle.bmc.identity.model.Compartment;
 import com.oracle.bmc.identity.requests.ListCompartmentsRequest;
 import com.oracle.bmc.identity.responses.ListCompartmentsResponse;
 import net.lamgc.oracle.sentry.oci.account.OracleAccount;
-import net.lamgc.oracle.sentry.oci.compute.ComputeInstance;
 import net.lamgc.oracle.sentry.oci.compute.ssh.SshAuthIdentityProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

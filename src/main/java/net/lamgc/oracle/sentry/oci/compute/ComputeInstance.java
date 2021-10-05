@@ -8,7 +8,6 @@ import com.oracle.bmc.core.requests.InstanceActionRequest;
 import com.oracle.bmc.core.responses.GetImageResponse;
 import com.oracle.bmc.core.responses.GetInstanceResponse;
 import com.oracle.bmc.core.responses.InstanceActionResponse;
-import net.lamgc.oracle.sentry.ComputeInstanceManager;
 import net.lamgc.oracle.sentry.oci.account.OracleAccount;
 import net.lamgc.oracle.sentry.oci.compute.ssh.InstanceSsh;
 import net.lamgc.oracle.sentry.oci.compute.ssh.SshAuthInfo;
