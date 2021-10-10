@@ -1,4 +1,5 @@
 //file:noinspection GradlePackageUpdate SpringBoot 的版本由插件管理.
+//file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.5.4'
@@ -6,7 +7,7 @@ plugins {
     id 'jacoco'
 }
 
-group 'net.lamgc.oracle'
+group 'net.lamgc'
 version '0.2.0'
 compileJava.sourceCompatibility = JavaVersion.VERSION_16
 
