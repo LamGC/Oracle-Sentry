@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Map;
@@ -96,19 +95,15 @@ public class GroovyScriptLoader implements ScriptLoader {
 
     private static Binding createBinding(ScriptComponents components, ScriptInfo info) {
         Binding binding = new Binding();
-        for (Field field : components.getClass().getDeclaredFields()) {
-            try {
-                String name = field.getName();
-                field.setAccessible(true);
-                Object o = field.get(components);
-                if (o instanceof ScriptComponentFactory factory) {
-                    binding.setProperty(factory.getPropertyName(), factory.getInstance(info));
-                } else {
-                    binding.setProperty(name, o);
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+        components.getComponentObjects().forEach(binding::setProperty);
+        for (ScriptComponentFactory<?> factory : components.getScriptComponentFactories()) {
+            String componentName = factory.getPropertyName();
+            if (binding.hasVariable(componentName)) {
+                log.warn("脚本组件名发生冲突: 工厂 {} 所给定的组件名已经存在静态组件, 将跳过创建.", factory.getClass());
+                continue;
             }
+            Object componentObject = factory.getInstance(info);
+            binding.setProperty(componentName, componentObject);
         }
         return binding;
     }

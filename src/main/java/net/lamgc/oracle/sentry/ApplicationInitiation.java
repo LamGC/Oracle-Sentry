@@ -4,11 +4,9 @@ import com.google.common.base.Throwables;
 import net.lamgc.oracle.sentry.oci.account.OracleAccount;
 import net.lamgc.oracle.sentry.oci.account.OracleAccountManager;
 import net.lamgc.oracle.sentry.oci.compute.ComputeInstanceManager;
+import net.lamgc.oracle.sentry.script.ScriptComponentExtension;
 import net.lamgc.oracle.sentry.script.ScriptComponents;
-import net.lamgc.oracle.sentry.script.ScriptLoggerFactory;
 import net.lamgc.oracle.sentry.script.ScriptManager;
-import net.lamgc.oracle.sentry.script.tools.http.ScriptHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ServiceLoader;
 
 /**
  * @author LamGC
@@ -96,16 +95,27 @@ class ApplicationInitiation {
     @Bean("sentry.script.manager")
     @Autowired
     public ScriptManager initialScriptManager(ComputeInstanceManager instanceManager, OracleAccountManager accountManager) {
-        ScriptComponents context = new ScriptComponents(new ScriptHttpClient(HttpClientBuilder.create()
-                .build()),
-                instanceManager,
-                new ScriptLoggerFactory(),
-                accountManager
-        );
+        ScriptComponents components = new ScriptComponents();
+        components.addComponentObject("InstanceManager", instanceManager);
+        components.addComponentObject("AccountManager", accountManager);
 
-        ScriptManager manager = new ScriptManager(new File(scriptsLocation), context);
+        configureScriptComponentsFromExtension(components);
+
+        ScriptManager manager = new ScriptManager(new File(scriptsLocation), components);
         manager.loadScripts();
         return manager;
+    }
+
+    private void configureScriptComponentsFromExtension(ScriptComponents components) {
+        ServiceLoader<ScriptComponentExtension> extensions = ServiceLoader.load(ScriptComponentExtension.class);
+        for (ScriptComponentExtension extension : extensions) {
+            try {
+                extension.configureScriptComponents(components);
+            } catch (Exception e) {
+                log.error("脚本组件扩展配置组件时发生未捕获异常.(Extension: {})\n{}",
+                        extension.getClass().getName(), Throwables.getStackTraceAsString(e));
+            }
+        }
     }
 
     @PostConstruct
