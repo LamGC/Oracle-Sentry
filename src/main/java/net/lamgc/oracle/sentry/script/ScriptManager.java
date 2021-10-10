@@ -66,6 +66,13 @@ public final class ScriptManager {
                 } else {
                     continue;
                 }
+                ScriptInfo scriptInfo = loader.getScriptInfo(script);
+                if (scriptInfo == null) {
+                    log.warn("脚本加载成功, 但加载器没有返回脚本信息, 该脚本已放弃.");
+                    return false;
+                }
+                scripts.put(scriptInfo, script);
+                return true;
             } catch (Exception e) {
                 log.error("脚本加载时发生异常.(Loader: {}, Path: {})\n{}",
                         loader.getClass().getName(),
@@ -73,13 +80,6 @@ public final class ScriptManager {
                         Throwables.getStackTraceAsString(e));
                 throw new InvocationTargetException(e);
             }
-            ScriptInfo scriptInfo = loader.getScriptInfo(script);
-            if (scriptInfo == null) {
-                log.warn("脚本加载成功, 但加载器没有返回脚本信息, 该脚本已放弃.");
-                return false;
-            }
-            scripts.put(scriptInfo, script);
-            return true;
         }
         return false;
     }
