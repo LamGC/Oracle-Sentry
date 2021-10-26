@@ -7,6 +7,9 @@ import com.oracle.bmc.Region;
 import com.oracle.bmc.auth.AuthenticationDetailsProvider;
 import com.oracle.bmc.auth.SimpleAuthenticationDetailsProvider;
 import com.oracle.bmc.auth.SimplePrivateKeySupplier;
+import net.lamgc.oracle.sentry.common.OracleBmcExceptionHandler;
+import net.lamgc.oracle.sentry.common.retry.ExponentialBackoffDelayer;
+import net.lamgc.oracle.sentry.common.retry.Retryer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +21,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -55,23 +59,39 @@ public final class OracleAccountManager {
         if (configFiles == null) {
             throw new IOException("Unable to access the specified directory: " + directory.getCanonicalPath());
         }
-        int loadedCount = 0;
+        AtomicInteger loadedCount = new AtomicInteger();
         for (File configFile : configFiles) {
             try {
-                OracleAccount account = loadFromConfigFile(configFile);
-                if (account == null) {
+                Retryer<OracleAccount> retryer = Retryer.builder(() -> {
+                            OracleAccount account = loadFromConfigFile(configFile);
+                            if (account == null) {
+                                return null;
+                            }
+                            log.info("已成功加载身份配置文件.\n\tUserId: {}\n\tUsername: {}\n\tPath: {}",
+                                    account.id(),
+                                    account.name(),
+                                    configFile.getCanonicalPath());
+                            return account;
+                        })
+                        .delayer(new ExponentialBackoffDelayer())
+                        .exceptionHandler(new OracleBmcExceptionHandler())
+                        .retryNumber(8)
+                        .create();
+
+                Future<OracleAccount> future = retryer.executeAsync();
+                future.get(30, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                if (e instanceof TimeoutException) {
                     continue;
+                } else if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                    break;
                 }
-                loadedCount ++;
-                log.info("已成功加载身份配置文件.\n\tUserId: {}\n\tUsername: {}\n\tPath: {}",
-                        account.id(),
-                        account.name(),
-                        configFile.getCanonicalPath());
-            } catch (Exception e) {
-                log.error("加载身份配置文件时发生异常.(Path: {})\n{}", configFile.getCanonicalPath(), Throwables.getStackTraceAsString(e));
+
+                log.error("加载身份配置文件时发生异常.(Path: {})\n{}", configFile.getCanonicalPath(), Throwables.getStackTraceAsString(e.getCause()));
             }
         }
-        return loadedCount;
+        return loadedCount.get();
     }
 
     /**
